@@ -31,15 +31,15 @@ class SignUpPage extends StatelessWidget {
         child: SingleChildScrollView(
           child: Center(
             child: Column(
-              children: [
+              children: const [
                 // const SizedBox(height: 100),
                 // Image.asset('assets/images/houseTrans2.png'),
-                const Text(
+                Text(
                   'Create account for your smarthome',
                   style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white54),
                 ),
-                const SizedBox(height: 10),
-                const SizedBox(
+                SizedBox(height: 10),
+                SizedBox(
                   width: 450,
                   child: Padding(
                     padding: EdgeInsets.symmetric(vertical: 00.0, horizontal: 20),

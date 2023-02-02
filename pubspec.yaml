@@ -42,6 +42,7 @@ dependencies:
   azlistview: ^2.0.0
   permission_handler: ^10.2.0
   json_annotation: ^4.8.0
+  flutter_native_splash: ^2.2.16
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,11 @@ flutter_icons:
   image_path: "assets/icon/icon.png"
   adaptive_icon_background: "#000000"
   adaptive_icon_foreground: "assets/icon/icon_forground.png"
+
+
+flutter_native_splash:
+  color: "#000000"
+  image: "assets/icon/icon_forground.png"
 
 
 # The following section is specific to Flutter packages.

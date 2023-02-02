@@ -4,9 +4,7 @@ import 'package:wejeo_smart/logic/tuya_handler.dart';
 import 'package:wejeo_smart/model/tuya_device.dart';
 import 'package:wejeo_smart/pages/device_pages/add_device_page.dart';
 import 'package:wejeo_smart/widgets/add_icon_button.dart';
-
 import '../device_pages/single_device_page.dart';
-import '../../widgets/room_list_view.dart';
 
 class HomeOverview extends StatefulWidget {
   const HomeOverview({Key? key}) : super(key: key);
@@ -59,19 +57,17 @@ class _HomeOverviewState extends State<HomeOverview> {
                     child: Text('No Devices', style: TextStyle(fontSize: 26, color: Colors.white60)),
                   );
                 } else {
-                  return Expanded(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(height: 1, color: Colors.white24),
-                      itemCount: deviceList.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 0.0),
-                          child: SmartDeviceListTile(
-                            device: deviceList[index],
-                          ),
-                        );
-                      },
-                    ),
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(height: 1, color: Colors.white24),
+                    itemCount: deviceList.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 0.0),
+                        child: SmartDeviceListTile(
+                          device: deviceList[index],
+                        ),
+                      );
+                    },
                   );
                 }
               }),

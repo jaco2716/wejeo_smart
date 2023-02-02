@@ -8,6 +8,7 @@ import TuyaSmartBaseKit
     let tuyaUserHandler = TuyaUserHandler.sharedInstance
     let tuyaHomeHandler = TuyaHomeHandler.sharedInstance
     let tuyaDeviceHandler = TuyaDeviceHandler.sharedInstance
+    let tuyaTimerHandler = TuyaTimerHandler.sharedInstance
     
     override func application(
         _ application: UIApplication,
@@ -15,6 +16,7 @@ import TuyaSmartBaseKit
     ) -> Bool {
         
         //Flutter Method Channel
+        let timerEventChannelName = "dk.wejeo.wejeoSmart/timerEvents"
         let deviceEventChannelName = "dk.wejeo.wejeoSmart/deviceEvents"
         let homeEventChannelName = "dk.wejeo.wejeoSmart/homeEvents"
         let tuyaChannelName = "dk.wejeo.wejeoSmart/tuya"
@@ -23,6 +25,9 @@ import TuyaSmartBaseKit
         tuyaChannel.setMethodCallHandler({(call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
             self.checkMethodChannel(call: call, result: result)
         })
+        
+        let timerChannel = FlutterEventChannel(name: timerEventChannelName, binaryMessenger: controller.binaryMessenger)
+        timerChannel.setStreamHandler(tuyaTimerHandler)
         
         let deviceChannel = FlutterEventChannel(name: deviceEventChannelName, binaryMessenger: controller.binaryMessenger)
         deviceChannel.setStreamHandler(tuyaDeviceHandler)
@@ -220,30 +225,37 @@ import TuyaSmartBaseKit
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }
             
-        } else if (call.method == "addDeviceTimer"){
+        }
+        
+        
+        //-------------------------------------------------------------------------------
+        //Timer functions
+        else if (call.method == "addDeviceTimer"){
             if  let args = call.arguments as? Dictionary<String, Any>,
                 let deviceId = args["deviceId"] as? String,
                 let time = args["time"] as? String,
                 let loops = args["loops"] as? String,
                 let dpsStatus = args["dpsStatus"] as? Bool{
-                tuyaDeviceHandler.addDeviceTimer(result: result, deviceId: deviceId, time: time, loops: loops, dpsStatus: dpsStatus)
+                tuyaTimerHandler.addDeviceTimer(result: result, deviceId: deviceId, time: time, loops: loops, dpsStatus: dpsStatus)
             } else {
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }
             
-        } else if (call.method == "getDeviceTimers"){
-            if  let deviceId = call.arguments as? String {
-                tuyaDeviceHandler.getDeviceTimers(result: result, deviceId: deviceId)
-            } else {
-                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
-            }
-            
-        } else if (call.method == "updateTimerStatus"){
+        }
+//        else if (call.method == "getDeviceTimers"){
+//            if  let deviceId = call.arguments as? String {
+//                tuyaTimerHandler.getDeviceTimers(result: result, deviceId: deviceId)
+//            } else {
+//                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+//            }
+//
+//        }
+        else if (call.method == "updateTimerStatus"){
             if  let args = call.arguments as? Dictionary<String, Any>,
                 let deviceId = args["deviceId"] as? String,
                 let timerIds = args["timerIds"] as? [String],
                 let updateType = args["updateType"] as? Int32 {
-                tuyaDeviceHandler.updateTimerStatus(result: result, deviceId: deviceId, timerIds: timerIds, updateType: updateType)
+                tuyaTimerHandler.updateTimerStatus(result: result, deviceId: deviceId, timerIds: timerIds, updateType: updateType)
             } else {
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }

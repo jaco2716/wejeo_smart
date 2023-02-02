@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wejeo_smart/model/tuya_device.dart';
+import 'package:wejeo_smart/model/tuya_smart_timer.dart';
 
 class TuyaHandler extends ChangeNotifier {
   static const _methodChannel = MethodChannel('dk.wejeo.wejeoSmart/tuya');
@@ -120,7 +121,7 @@ class TuyaHandler extends ChangeNotifier {
   Future<void> startParing(
     String ssid,
     String password,
-    int mode,
+    // int mode,
     void Function(String deviceId) successCallback,
     void Function(String message) errorCallback,
   ) async {
@@ -130,7 +131,7 @@ class TuyaHandler extends ChangeNotifier {
         'homeId': currentHomeId,
         'password': password, //'JJ20120902','749dfd196',
         'ssid': ssid, //'Schmidt2',
-        'mode': mode,
+        'mode': 0,
       };
       // print(args);
       String result = await _methodChannel.invokeMethod('startParing', args);
@@ -336,6 +337,35 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
+  ///
+  /// Get a Stream of the home devices dps updates
+  ///
+  /// Device model values:
+  /// * `"timerId"` : String? The id of the timer
+  /// * `"aliasName"` : String? The name of the timer
+  /// * `"dpsStatus"` : bool Indicates whether to switch on or off.
+  /// * `"loops"` : String? The days that are affected, starting from Sunday. Format: 0100000 - meaning Switches on mondays.
+  /// * `"status"` : bool Weather the timer is active.
+  /// * `"time"` : int The time it switches.
+  ///
+  Stream<List<TuyaSmartTimer>>? timersValueStream() {
+    try {
+      const deviceEventChannel = EventChannel('dk.wejeo.wejeoSmart/timerEvents');
+      final networkStream = deviceEventChannel
+          .receiveBroadcastStream()
+          .distinct()
+          .map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>).map((e) => TuyaSmartTimer.fromJson(e)).toList());
+      // deviceEventChannel.receiveBroadcastStream().distinct().map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>));
+
+      return networkStream;
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      return null;
+    }
+  }
+
   Future<List<Map<String, dynamic>>?> getDeviceProperties(String deviceId) async {
     try {
       var result = await _methodChannel.invokeMethod<String?>('getDeviceProperties', deviceId);
@@ -399,23 +429,23 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getDeviceTimers(
-    String deviceId,
-  ) async {
-    try {
-      var result = await _methodChannel.invokeMethod<String?>('getDeviceTimers', deviceId);
-      List<Map<String, dynamic>> resultList = (jsonDecode(result ?? '[]') as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
+  // Future<List<Map<String, dynamic>>?> getDeviceTimers(
+  //   String deviceId,
+  // ) async {
+  //   try {
+  //     var result = await _methodChannel.invokeMethod<String?>('getDeviceTimers', deviceId);
+  //     List<Map<String, dynamic>> resultList = (jsonDecode(result ?? '[]') as List<dynamic>).map((e) => e as Map<String, dynamic>).toList();
 
-      print(result);
-      print(resultList);
-      return resultList;
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('Error: $e');
-      }
-      return null;
-    }
-  }
+  //     print(result);
+  //     print(resultList);
+  //     return resultList;
+  //   } on PlatformException catch (e) {
+  //     if (kDebugMode) {
+  //       print('Error: $e');
+  //     }
+  //     return null;
+  //   }
+  // }
 
   Future<void> updateTimerStatus(
     String deviceId,

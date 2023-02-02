@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
 import 'package:wejeo_smart/logic/validate_values.dart';
 import 'package:wejeo_smart/model/tuya_device.dart';
+import 'package:wejeo_smart/model/tuya_smart_timer.dart';
 import 'package:wejeo_smart/pages/device_pages/add_schedule_page.dart';
 import 'package:wejeo_smart/widgets/add_icon_button.dart';
 import 'package:wejeo_smart/widgets/my_alert_dialog.dart';
@@ -22,12 +23,15 @@ class SingleDevicePage extends StatefulWidget {
 
 class _SingleDevicePageState extends State<SingleDevicePage> {
   Stream<TuyaDevice>? deviceStream;
-  late Future<List<Map<String, dynamic>>?> deviceTimersFuture;
+  Stream<List<TuyaSmartTimer>>? timerStream;
+  // late Future<List<Map<String, dynamic>>?> deviceTimersFuture;
+  bool _editSchedules = false;
 
   @override
   void initState() {
     deviceStream = _tuyaHandler.deviceValueStream(widget.device.devId);
-    deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
+    timerStream = _tuyaHandler.timersValueStream();
+    // deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
     super.initState();
   }
 
@@ -159,15 +163,7 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       children: [
                         Text(deviceStream.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 20),
-                        Row(
-                          children: [
-                            Text(deviceStream.dps['1'] ? 'ON' : 'OFF'),
-                            const Text(' - '),
-                            Text(deviceStream.isOnline ? 'Online' : 'Offline'),
-                            // Text('${deviceStream.dps['1']} - ${deviceStream.isOnline}',
-                            //     style: TextStyle(fontSize: 16, color: Colors.grey[300], fontWeight: FontWeight.w600)),
-                          ],
-                        ),
+                        Text(deviceStream.isOnline ? 'Online' : 'Offline'),
                       ],
                     )
                   ],
@@ -179,25 +175,41 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 5),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('Switch Schedules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
+                      const Text('Switch Schedules', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3.0),
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _editSchedules = !_editSchedules;
+                              });
+                            },
+                            child: Text(_editSchedules ? 'Save' : 'Edit')),
+                      ),
+                      const Spacer(),
                       AddIconButton(onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AddSchedulePage(device: widget.device)));
+
+                        // .then((value) {
+                        //   Future.delayed(const Duration(milliseconds: 100), () {
+                        //     setState(() {
+                        //       deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
+                        //     });
+                        //   });
+                        // });
                       }),
                     ],
                   ),
                 ),
                 Expanded(
-                  child: FutureBuilder<List<Map<String, dynamic>>?>(
-                      future: deviceTimersFuture,
+                  child: StreamBuilder<List<TuyaSmartTimer>?>(
+                      stream: timerStream,
                       builder: (context, snapshot) {
-                        var scheduleList = snapshot.data ?? [];
+                        var timerList = snapshot.data ?? [];
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
-                        } else if (scheduleList.isEmpty) {
+                        } else if (timerList.isEmpty) {
                           return const Center(child: Text('No Schedules', style: TextStyle(fontSize: 26, color: Colors.white60)));
                         } else {
                           return ListView.separated(
@@ -207,7 +219,7 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                               if (snapshot.data!.length >= 25) {
                                 return Column(
                                   children: [
-                                    ScheduleListTile(timer: snapshot.data![index], deviceId: widget.device.devId),
+                                    ScheduleListTile(timer: timerList[index], deviceId: widget.device.devId),
                                     const Padding(
                                       padding: EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
@@ -219,7 +231,23 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                                   ],
                                 );
                               } else {
-                                return ScheduleListTile(timer: snapshot.data![index], deviceId: widget.device.devId);
+                                return Row(
+                                  children: [
+                                    _editSchedules
+                                        ? IconButton(
+                                            onPressed: () {
+                                              _tuyaHandler.updateTimerStatus(
+                                                  widget.device.devId, [timerList[index].timerId], 2, (message) {}, (message) {});
+                                              // setState(() {
+                                              //   deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
+                                              // });
+                                            },
+                                            color: Colors.red,
+                                            icon: const Icon(Icons.remove_circle_rounded))
+                                        : const SizedBox.shrink(),
+                                    Expanded(child: SizedBox(child: ScheduleListTile(timer: snapshot.data![index], deviceId: widget.device.devId))),
+                                  ],
+                                );
                               }
                             },
                           );

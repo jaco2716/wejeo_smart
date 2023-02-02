@@ -5,12 +5,16 @@ import 'package:provider/provider.dart';
 import 'logic/auth_app_state.dart';
 import 'model/providers/loading_provider.dart';
 import 'pages/authentication/check_login_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  Future.delayed(const Duration(seconds: 1), () => FlutterNativeSplash.remove());
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<LoadingProvider>(create: (context) => LoadingProvider()),
+        // ChangeNotifierProvider<LoadingProvider>(create: (context) => LoadingProvider()),
         ChangeNotifierProvider<AuthAppState>(create: (context) => AuthAppState()),
       ],
       child: const MyApp(),
@@ -40,6 +44,13 @@ class MyApp extends StatelessWidget {
         popupMenuTheme: PopupMenuThemeData(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
         cardTheme: CardTheme(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
         elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            minimumSize: MaterialStateProperty.all<Size>(const Size(120, 50)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
           style: ButtonStyle(
             foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
             minimumSize: MaterialStateProperty.all<Size>(const Size(120, 50)),

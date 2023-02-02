@@ -36,23 +36,4 @@ class TuyaDevice {
   factory TuyaDevice.fromJson(Map<String, dynamic> json) => _$TuyaDeviceFromJson(json);
 
   Map<String, dynamic> toJson() => _$TuyaDeviceToJson(this);
-
-  // TuyaDevice.fromJson(Map<String, dynamic> json)
-  //     : name = json['name'] as String,
-  //       devId = json['devId'] as String,
-  //       isOnline = json['isOnline'] as String,
-  //       deviceType = json['deviceType'] as String,
-  //       dps = json['dps'] as Map<String,dynamic>,
-  //       homeId = json['homeId'] as String,
-  //       roomId = json['roomId'] as String;
-
-  // Map<String, dynamic> toJson() => {
-  //       'name': name,
-  //       'devId': devId,
-  //       'isOnline': isOnline,
-  //       'deviceType': deviceType,
-  //       'dps': dps,
-  //       'homeId': homeId,
-  //       'roomId': roomId,
-  //     };
 }

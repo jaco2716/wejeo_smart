@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wejeo_smart/model/tuya_smart_timer.dart';
 
 import '../logic/tuya_handler.dart';
 
 class ScheduleListTile extends StatefulWidget {
   final String deviceId;
-  final Map<String, dynamic> timer;
+  final TuyaSmartTimer timer;
   const ScheduleListTile({
     Key? key,
     required this.timer,
@@ -28,7 +29,7 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
 
   @override
   Widget build(BuildContext context) {
-    String loops = widget.timer['loops'];
+    String loops = widget.timer.loops;
     String weekDayString = '';
     if (loops == '1111111') {
       weekDayString = 'Every Day';
@@ -44,8 +45,6 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: ListTile(
-        onTap: () {},
-        // leading: Image.asset('assets/images/socket.png'),
         leading: Stack(
           alignment: AlignmentDirectional.bottomStart,
           children: [
@@ -57,7 +56,7 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
                 height: 22,
                 width: 22,
                 child: CircleAvatar(
-                    backgroundColor: widget.timer['dpsStatus'] ? Colors.green : Colors.deepOrange,
+                    backgroundColor: widget.timer.dpsStatus ? Colors.green : Colors.deepOrange,
                     foregroundColor: Colors.white,
                     child: const Icon(
                       Icons.power_settings_new_rounded,
@@ -66,7 +65,7 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
           ],
         ),
         // title: Text('Switch on: 19:30'),
-        title: Text('Switch ${widget.timer['dpsStatus'] ? 'on' : 'off'}: ${widget.timer['time']}'), //'Switch on: 19:30'),
+        title: Text('Switch ${widget.timer.dpsStatus ? 'on' : 'off'}: ${widget.timer.time}'), //'Switch on: 19:30'),
         subtitle: Text(
           weekDayString,
           style: const TextStyle(fontSize: 12),
@@ -74,14 +73,14 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
         trailing: Switch(
           onChanged: (value) async {
             TuyaHandler tuyaHandler = TuyaHandler();
-            await tuyaHandler.updateTimerStatus(widget.deviceId, [widget.timer['timerId']], widget.timer['status'] ? 0 : 1, (message) {
+            await tuyaHandler.updateTimerStatus(widget.deviceId, [widget.timer.timerId], widget.timer.status ? 0 : 1, (message) {
               print('working');
             }, (message) {
               print('not working');
             });
             setState(() {});
           },
-          value: widget.timer['status'],
+          value: widget.timer.status,
         ),
       ),
     );

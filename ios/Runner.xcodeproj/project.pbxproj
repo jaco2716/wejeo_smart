@@ -11,6 +11,8 @@
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		6E06FEB329892B2C001BCC56 /* TuyaDeviceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06FEB229892B2C001BCC56 /* TuyaDeviceExtensions.swift */; };
 		6E06FED229892C94001BCC56 /* TuyaHomeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06FED129892C94001BCC56 /* TuyaHomeExtensions.swift */; };
+		6E06FF10298C5455001BCC56 /* TuyaTimerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06FF0F298C5455001BCC56 /* TuyaTimerHandler.swift */; };
+		6E06FF12298C546F001BCC56 /* TuyaTimerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E06FF11298C546F001BCC56 /* TuyaTimerExtensions.swift */; };
 		6E377F91297ED28500BD1785 /* t_s.bmp in Resources */ = {isa = PBXBuildFile; fileRef = 6E377F90297ED28500BD1785 /* t_s.bmp */; };
 		6E377F93297ED73000BD1785 /* AppKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E377F92297ED73000BD1785 /* AppKey.swift */; };
 		6E377F99297EE16C00BD1785 /* TuyaHomeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E377F94297EE16C00BD1785 /* TuyaHomeHandler.swift */; };
@@ -47,6 +49,8 @@
 		47D3FB46F53FD278EFECCC43 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		6E06FEB229892B2C001BCC56 /* TuyaDeviceExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuyaDeviceExtensions.swift; sourceTree = "<group>"; };
 		6E06FED129892C94001BCC56 /* TuyaHomeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuyaHomeExtensions.swift; sourceTree = "<group>"; };
+		6E06FF0F298C5455001BCC56 /* TuyaTimerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuyaTimerHandler.swift; sourceTree = "<group>"; };
+		6E06FF11298C546F001BCC56 /* TuyaTimerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuyaTimerExtensions.swift; sourceTree = "<group>"; };
 		6E377F90297ED28500BD1785 /* t_s.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = t_s.bmp; sourceTree = "<group>"; };
 		6E377F92297ED73000BD1785 /* AppKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppKey.swift; sourceTree = "<group>"; };
 		6E377F94297EE16C00BD1785 /* TuyaHomeHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TuyaHomeHandler.swift; sourceTree = "<group>"; };
@@ -93,6 +97,8 @@
 		6E06FED329892CEC001BCC56 /* TuyaLogic */ = {
 			isa = PBXGroup;
 			children = (
+				6E06FF0F298C5455001BCC56 /* TuyaTimerHandler.swift */,
+				6E06FF11298C546F001BCC56 /* TuyaTimerExtensions.swift */,
 				6E377F96297EE16C00BD1785 /* TuyaDeviceHandler.swift */,
 				6E06FEB229892B2C001BCC56 /* TuyaDeviceExtensions.swift */,
 				6E377F94297EE16C00BD1785 /* TuyaHomeHandler.swift */,
@@ -328,12 +334,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
+				6E06FF10298C5455001BCC56 /* TuyaTimerHandler.swift in Sources */,
 				6E377F9B297EE16C00BD1785 /* TuyaDeviceHandler.swift in Sources */,
 				6E377F93297ED73000BD1785 /* AppKey.swift in Sources */,
 				6E377F9A297EE16C00BD1785 /* TuyaUserHandler.swift in Sources */,
 				6E377F99297EE16C00BD1785 /* TuyaHomeHandler.swift in Sources */,
 				6E377F9D297EE16C00BD1785 /* JsonExtension.swift in Sources */,
 				6E377F9C297EE16C00BD1785 /* LocalDataHandler.swift in Sources */,
+				6E06FF12298C546F001BCC56 /* TuyaTimerExtensions.swift in Sources */,
 				6E06FED229892C94001BCC56 /* TuyaHomeExtensions.swift in Sources */,
 				6E06FEB329892B2C001BCC56 /* TuyaDeviceExtensions.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,

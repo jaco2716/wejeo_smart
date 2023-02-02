@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_native_splash (0.0.1):
+    - Flutter
   - network_info_plus (0.0.1):
     - Flutter
   - permission_handler_apple (9.0.4):
@@ -94,6 +96,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
   - network_info_plus (from `.symlinks/plugins/network_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - TuyaSmartHomeKit (~> 4.0.0)
@@ -130,6 +133,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_native_splash:
+    :path: ".symlinks/plugins/flutter_native_splash/ios"
   network_info_plus:
     :path: ".symlinks/plugins/network_info_plus/ios"
   permission_handler_apple:
@@ -137,6 +142,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  flutter_native_splash: 52501b97d1c0a5f898d687f1646226c1f93c56ef
   network_info_plus: b78876159360f5580608c2cea620d6ceffabd0ad
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   TuyaSmartActivatorCoreKit: 1d82f98eb7c2fd3a2c9a66098d9d57f652805757

@@ -142,10 +142,16 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                     showMyDialog(context, '', message: 'Please select at least 1 day');
                   } else {
                     TuyaHandler tuyaHandler = TuyaHandler();
-                    await tuyaHandler.addDeviceTimer(widget.device.devId, time, loops, _switchValue, (message) {}, (message) {});
-                    if (mounted) {
-                      Navigator.pop(context);
-                    }
+                    await tuyaHandler.addDeviceTimer(widget.device.devId, time, loops, _switchValue, (message) {
+                      if (mounted) {
+                        Navigator.pop(context);
+                      }
+                    }, (message) {
+                      if (mounted) {
+                        Navigator.pop(context);
+                      }
+                      showMyDialog(context, '', message: message);
+                    });
                   }
                 },
               ),
