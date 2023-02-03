@@ -190,14 +190,6 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       const Spacer(),
                       AddIconButton(onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AddSchedulePage(device: widget.device)));
-
-                        // .then((value) {
-                        //   Future.delayed(const Duration(milliseconds: 100), () {
-                        //     setState(() {
-                        //       deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
-                        //     });
-                        //   });
-                        // });
                       }),
                     ],
                   ),
@@ -207,6 +199,7 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       stream: timerStream,
                       builder: (context, snapshot) {
                         var timerList = snapshot.data ?? [];
+                        print('#####update ');
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (timerList.isEmpty) {
@@ -235,13 +228,7 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                                   children: [
                                     _editSchedules
                                         ? IconButton(
-                                            onPressed: () {
-                                              _tuyaHandler.updateTimerStatus(
-                                                  widget.device.devId, [timerList[index].timerId], 2, (message) {}, (message) {});
-                                              // setState(() {
-                                              //   deviceTimersFuture = _tuyaHandler.getDeviceTimers(widget.device.devId);
-                                              // });
-                                            },
+                                            onPressed: () => deleteTimer(timerList[index].timerId),
                                             color: Colors.red,
                                             icon: const Icon(Icons.remove_circle_rounded))
                                         : const SizedBox.shrink(),
@@ -288,6 +275,19 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
             ),
           );
         });
+  }
+
+  void deleteTimer(String timerId) async {
+    showMyLoadingDialog(context);
+    await _tuyaHandler.updateTimerStatus(widget.device.devId, [timerId], 2, (message) {}, (message) {});
+    Future.delayed(
+      const Duration(milliseconds: 200),
+      () {
+        if (mounted) {
+          Navigator.pop(context);
+        }
+      },
+    );
   }
 }
 

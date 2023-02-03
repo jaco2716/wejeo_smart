@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wejeo_smart/model/providers/tuya_home_provider.dart';
 
 import 'logic/auth_app_state.dart';
 import 'model/providers/loading_provider.dart';
@@ -14,7 +15,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        // ChangeNotifierProvider<LoadingProvider>(create: (context) => LoadingProvider()),
+        ChangeNotifierProvider<TuyaHomeProvider>(create: (context) => TuyaHomeProvider()),
         ChangeNotifierProvider<AuthAppState>(create: (context) => AuthAppState()),
       ],
       child: const MyApp(),

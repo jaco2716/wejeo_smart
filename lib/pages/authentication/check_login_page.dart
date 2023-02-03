@@ -17,7 +17,7 @@ class _CheckLoginPageState extends State<CheckLoginPage> {
     return Consumer<AuthAppState>(
       builder: (context, appState, _) {
         if (appState.loginState == AppLoginState.loggedIn) {
-          return MyHomePage();
+          return const MyHomePage();
         } else {
           return const LoginPage();
         }

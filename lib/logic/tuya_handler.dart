@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wejeo_smart/model/tuya_device.dart';
+import 'package:wejeo_smart/model/tuya_home.dart';
 import 'package:wejeo_smart/model/tuya_smart_timer.dart';
 
 class TuyaHandler extends ChangeNotifier {
@@ -19,18 +20,13 @@ class TuyaHandler extends ChangeNotifier {
   /// * `"latitude"` : Double The latitude of the Home
   /// * `"longitude"` : Double The longitude of the Home
   ///
-  Future<List<Map<String, dynamic>>?> getHomeList() async {
+  Future<List<TuyaHome>?> getHomeList() async {
     try {
       var result = await _methodChannel.invokeMethod<String?>('getHomeList');
-      // print('result:');
-      // print('$result');
-      List<dynamic> resultList = [];
-      if (result != null) {
-        resultList = jsonDecode(result);
-      }
-      List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
 
-      return mapResult;
+      List<TuyaHome> resultList = (jsonDecode(result ?? '[]') as List<dynamic>).map((e) => TuyaHome.fromJson(e)).toList();
+
+      return resultList;
     } on PlatformException catch (e) {
       if (kDebugMode) {
         print('Error: $e');
@@ -216,23 +212,23 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getDeviceListFromHomeId(int homeId) async {
-    try {
-      // Map<String, dynamic>? result = await platform.invokeMethod('getCurrentHomeDeviceList');
-      var result = await _methodChannel.invokeMethod<String?>('getDeviceListFromHomeId', homeId);
-      List<dynamic> resultList = [];
-      if (result != null) {
-        resultList = jsonDecode(result);
-      }
-      List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
-      return mapResult;
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('Error: $e');
-      }
-      return null;
-    }
-  }
+  // Future<List<Map<String, dynamic>>?> getDeviceListFromHomeId(int homeId) async {
+  //   try {
+  //     // Map<String, dynamic>? result = await platform.invokeMethod('getCurrentHomeDeviceList');
+  //     var result = await _methodChannel.invokeMethod<String?>('getDeviceListFromHomeId', homeId);
+  //     List<dynamic> resultList = [];
+  //     if (result != null) {
+  //       resultList = jsonDecode(result);
+  //     }
+  //     List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
+  //     return mapResult;
+  //   } on PlatformException catch (e) {
+  //     if (kDebugMode) {
+  //       print('Error: $e');
+  //     }
+  //     return null;
+  //   }
+  // }
 
   Future<void> modifyDeviceName(
     String deviceId,

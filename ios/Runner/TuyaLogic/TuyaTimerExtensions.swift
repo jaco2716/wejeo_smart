@@ -12,13 +12,20 @@ extension TuyaTimerHandler: FlutterStreamHandler {
         print("Timer Stream started")
         
         self.eventSink = events
-        guard let device = TuyaSmartDevice(deviceId: LocalDataHandler.currentDeviceId ?? "") else{
-            print("Device Error: \(LocalDataHandler.currentDeviceId ?? "")")
-            events(nil)
-            return nil
-        }
-        
-        events(self.getDeviceTimers())
+//        guard let device = TuyaSmartDevice(deviceId: LocalDataHandler.currentDeviceId ?? "") else{
+//            print("Device Error: \(LocalDataHandler.currentDeviceId ?? "")")
+//            events(nil)
+//            return nil
+//        }
+        self.getDeviceTimers(completion: { (dataResult) in
+            events(dataResult)
+        }, failure: { (error) in
+            if let e = error?.localizedDescription {
+                events(FlutterError.init(code: " tuyaFailureError", message: e, details: nil))
+            } else{
+                return
+            }
+        })
         return nil
     }
     

@@ -32,43 +32,48 @@ class TuyaTimerHandler : NSObject{
         super.init()
     }
     
-    public func getDeviceTimers() -> String? {
+    public func getDeviceTimers(completion: @escaping (String) -> Void, failure: @escaping (Error?) -> Void) {
         
         guard let device = TuyaSmartDevice(deviceId: LocalDataHandler.currentDeviceId ?? "") else{
             print("Device Error: \(LocalDataHandler.currentDeviceId ?? "")")
-            return nil
-        }
-        var resultData: String?
-        
-        self.tuyaSmartTimer.getTaskList(withBizId: device.deviceModel.devId,  bizType: 0, success: { (list) in
-            
-            guard let timerGroupList = list,
-                  let firstGroup = timerGroupList.first,
-                  let timerList = firstGroup.timers else {
-                print("Get first Timer failed")
-                return
-            }
-            
-            var timersData: [[AnyHashable : Any]] = []
-            for time in timerList {
-                let tempTimersData: [AnyHashable : Any] = [
-                    "timerId" : time.timerId!,
-                    "aliasName" : time.aliasName!,
-                    "date" : time.date!,
-                    "dpsStatus" : time.dps["1"]!,
-                    "loops" : time.loops!,
-                    "status" : time.status,
-                    "time" : time.time!,
-                ]
-                timersData.append(tempTimersData)
-            }
-            resultData = timersData.toJSONString()
-            
-        }, failure: { (error) in
             return
+        }
+        print("DevID: \(device.deviceModel.devId ?? "nil id")")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             
-        })
-        return resultData
+            self.tuyaSmartTimer.getTaskList(withBizId: device.deviceModel.devId,  bizType: 0, success: { (list) in
+                
+                guard let timerGroupList = list,
+                      let firstGroup = timerGroupList.first,
+                      let timerList = firstGroup.timers else {
+                    print("Get first Timer failed")
+                    completion("[]")
+                    return
+                }
+                
+                var timersData: [[AnyHashable : Any]] = []
+                for time in timerList {
+                    let tempTimersData: [AnyHashable : Any] = [
+                        "timerId" : time.timerId!,
+                        "aliasName" : time.aliasName!,
+                        "date" : time.date!,
+                        "dpsStatus" : time.dps["1"]!,
+                        "loops" : time.loops!,
+                        "status" : time.status,
+                        "time" : time.time!,
+                    ]
+                    timersData.append(tempTimersData)
+                }
+                print("getDeviceTimers")
+                print("\(timersData.toJSONString())")
+                
+                
+                completion(timersData.toJSONString())
+                
+            }, failure: { (error) in
+                failure(error)
+            })
+        }
     }
     
     
@@ -80,8 +85,17 @@ class TuyaTimerHandler : NSObject{
             guard let eventSink = self.eventSink else{
                 return
             }
+            self.getDeviceTimers(completion: { (dataResult) in
+                eventSink(dataResult)
+            }, failure: { (error) in
+                if let e = error?.localizedDescription {
+                    eventSink(FlutterError.init(code: " tuyaFailureError", message: e, details: nil))
+                } else{
+                    return
+                }
+            })
             
-            eventSink(self.getDeviceTimers())
+            
             result(message)
         } failure: { (error) in
             if let e = error?.localizedDescription {
@@ -101,7 +115,15 @@ class TuyaTimerHandler : NSObject{
                 return
             }
             
-            eventSink(self.getDeviceTimers())
+            self.getDeviceTimers(completion: { (dataResult) in
+                eventSink(dataResult)
+            }, failure: { (error) in
+                if let e = error?.localizedDescription {
+                    eventSink(FlutterError.init(code: " tuyaFailureError", message: e, details: nil))
+                } else{
+                    return
+                }
+            })
             result(message)
         } failure: { (error) in
             if let e = error?.localizedDescription {

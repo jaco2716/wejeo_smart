@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wejeo_smart/model/tuya_smart_timer.dart';
+import 'package:wejeo_smart/widgets/my_alert_dialog.dart';
 
 import '../logic/tuya_handler.dart';
 
@@ -73,12 +74,21 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
         trailing: Switch(
           onChanged: (value) async {
             TuyaHandler tuyaHandler = TuyaHandler();
+            showMyLoadingDialog(context);
             await tuyaHandler.updateTimerStatus(widget.deviceId, [widget.timer.timerId], widget.timer.status ? 0 : 1, (message) {
               print('working');
             }, (message) {
               print('not working');
             });
-            setState(() {});
+
+            Future.delayed(
+              const Duration(milliseconds: 200),
+              () {
+                if (mounted) {
+                  Navigator.pop(context);
+                }
+              },
+            );
           },
           value: widget.timer.status,
         ),

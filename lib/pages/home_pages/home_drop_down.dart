@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:wejeo_smart/model/tuya_home.dart';
 import 'package:wejeo_smart/pages/home_pages/add_home_page.dart';
 import 'package:wejeo_smart/res/constants.dart';
 import 'package:wejeo_smart/widgets/add_icon_button.dart';
 
 class HomeDropDown extends StatelessWidget {
-  List<Map<String, dynamic>> homeList;
-  HomeDropDown({
+  final List<TuyaHome> homeList;
+  const HomeDropDown({
     Key? key,
     required this.homeList,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    homeList = [
-      {'name': 'Main Home', 'homeId': ''},
-      {'name': 'sec Home', 'homeId': ''},
-      {'name': 'thisssa', 'homeId': ''},
-      {'name': 'thisssa ', 'homeId': ''},
-    ];
+    // homeList = [
+    //   {'name': 'Main Home', 'homeId': ''},
+    //   {'name': 'sec Home', 'homeId': ''},
+    //   {'name': 'thisssa', 'homeId': ''},
+    //   {'name': 'thisssa ', 'homeId': ''},
+    // ];
     return Material(
       borderRadius: BorderRadius.circular(40),
       color: Colors.transparent,
@@ -34,17 +35,21 @@ class HomeDropDown extends StatelessWidget {
         },
         itemBuilder: (BuildContext context) => homeList.asMap().entries.map<PopupMenuEntry<String>>((e) {
           if (e.key + 1 == homeList.length) {
-            return const PopupMenuItem<String>(
+            return PopupMenuItem<String>(
               height: 0,
+              padding: EdgeInsets.zero,
               value: 'Add Home',
-              child: HomeListTile(home: {'id': null, 'name': 'Add Home', 'geoName': ''}),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                child: HomeListTile(home: TuyaHome(name: 'Add Home', homeId: 0)),
+              ),
             );
           }
           var nextHome = homeList[e.key + 1];
           return PopupMenuItem<String>(
               height: 0,
               padding: EdgeInsets.zero,
-              value: nextHome['name'],
+              value: nextHome.name,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                 decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white24))),
@@ -56,7 +61,7 @@ class HomeDropDown extends StatelessWidget {
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const AddHomePage()));
                 },
-                child: const HomeListTile(home: {'id': null, 'name': 'Add Home', 'geoName': ''}))
+                child: HomeListTile(home: TuyaHome(name: 'Add Home', homeId: 0)))
             : HomeListTile(home: homeList[0], showTick: true),
       ),
     );
@@ -70,17 +75,17 @@ class HomeListTile extends StatelessWidget {
     this.showTick = false,
   }) : super(key: key);
 
-  final Map<String, dynamic> home;
+  final TuyaHome home;
   final bool showTick;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      width: 250,
+      width: 260,
       // constraints: const BoxConstraints(maxWidth: 250),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -95,11 +100,11 @@ class HomeListTile extends StatelessWidget {
           // ),
           const SizedBox(width: 10),
           Flexible(
-            child: Text(home['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            child: Text(home.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(width: 6),
           showTick ? const Icon(Icons.arrow_drop_down) : const SizedBox.shrink(),
-          home['homeId'] == null ? const Icon(Icons.add_rounded, color: Colors.deepOrange, size: 30) : const SizedBox.shrink(),
+          home.homeId == 0 ? const Icon(Icons.add_rounded, color: Colors.deepOrange, size: 30) : const SizedBox.shrink(),
           const SizedBox(width: 6),
         ],
       ),

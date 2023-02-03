@@ -99,7 +99,6 @@ class _AddSchedulePageState extends State<AddSchedulePage> {
                 itemCount: _weekDays.length,
                 itemBuilder: (context, index) {
                   int newIndex = (index + 1) % 7;
-                  print(newIndex);
                   return SizedBox(
                     // height: 40,
                     child: Theme(
