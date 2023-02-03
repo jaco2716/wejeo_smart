@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
@@ -43,7 +41,6 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
         stream: deviceStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            print('waiting');
             return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: AppBar(),
@@ -53,7 +50,6 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
           // print('#####snapshot:');
           // print(snapshot.data);
           if (!snapshot.hasData) {
-            print('no data');
             return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: AppBar(),
@@ -189,7 +185,8 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       ),
                       const Spacer(),
                       AddIconButton(onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AddSchedulePage(device: widget.device)));
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => AddSchedulePage(device: widget.device), fullscreenDialog: true));
                       }),
                     ],
                   ),
@@ -199,7 +196,6 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       stream: timerStream,
                       builder: (context, snapshot) {
                         var timerList = snapshot.data ?? [];
-                        print('#####update ');
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (timerList.isEmpty) {

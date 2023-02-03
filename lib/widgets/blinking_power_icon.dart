@@ -8,7 +8,7 @@ class BlinkingPowerIcon extends StatefulWidget {
   const BlinkingPowerIcon({Key? key, required this.durationMili, required this.title}) : super(key: key);
 
   @override
-  _BlinkingPowerIconState createState() => _BlinkingPowerIconState();
+  State<BlinkingPowerIcon> createState() => _BlinkingPowerIconState();
 }
 
 class _BlinkingPowerIconState extends State<BlinkingPowerIcon> {

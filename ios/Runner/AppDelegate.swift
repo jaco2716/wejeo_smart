@@ -113,6 +113,9 @@ import TuyaSmartBaseKit
             } else {
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }
+        } else if (call.method == "cancelAccount"){
+            tuyaUserHandler.cancelAccount(result: result)
+            
         }
         
         

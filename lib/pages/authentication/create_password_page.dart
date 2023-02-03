@@ -63,7 +63,7 @@ class _CreatePasswordFormState extends State<CreatePasswordForm> {
   // String? _repeatPassword;
   // bool _hasAcceptedTerms = false;
   // bool _showTermsNotAccepted = false;
-  CountryCode _countryCode = CountryCode(country: "Denmark", code: 45);
+  final _countryCode = CountryCode(country: "Denmark", code: 45);
 
   Future<void> _registerUser(String email, String password, String countryCode, String verificationCode) async {
     showMyLoadingDialog(context);

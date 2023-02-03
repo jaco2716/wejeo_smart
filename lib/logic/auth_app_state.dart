@@ -122,7 +122,6 @@ class AuthAppState extends ChangeNotifier {
         'countryCode': countryCode,
         'type': type.index,
       };
-      print('$args');
       final String result = await _methodChannel.invokeMethod('sendVerificationCode', args);
       if (kDebugMode) {
         print('Result: $result');
@@ -186,8 +185,9 @@ class AuthAppState extends ChangeNotifier {
         'verificationCode': verificationCode,
       };
       final String result = await _methodChannel.invokeMethod('registerUser', args);
+      Future.delayed(const Duration(milliseconds: 100));
+      await checkLogin();
       if (result == 'Success') {
-        await checkLogin();
         successCallback();
       } else {
         errorCallback(result);
@@ -216,12 +216,39 @@ class AuthAppState extends ChangeNotifier {
         'verificationCode': verificationCode,
       };
       final String result = await _methodChannel.invokeMethod('resetPasswordByEmail', args);
-      print('Result: $result');
       if (result == 'Success') {
         await checkLogin();
         successCallback();
       } else {
         errorCallback(result);
+      }
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
+      errorCallback('${e.message}');
+    }
+  }
+
+  Future<void> cancelAccount(
+    void Function() successCallback,
+    void Function(String message) errorCallback,
+  ) async {
+    try {
+      final String? result = await _methodChannel.invokeMethod('cancelAccount');
+      await checkLogin();
+      if (kDebugMode) {
+        print('Result: $result');
+      }
+      if (result != null) {
+        if (result == 'Success') {
+          await checkLogin();
+          successCallback();
+        } else {
+          errorCallback(result);
+        }
+      } else {
+        errorCallback('Something went wrong');
       }
     } on PlatformException catch (e) {
       if (kDebugMode) {

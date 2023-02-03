@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wejeo_smart/pages/manage_account_page.dart';
 
 import '../logic/auth_app_state.dart';
 import 'my_alert_dialog.dart';
@@ -34,10 +35,18 @@ class _MenuPopupButtonState extends State<MenuPopupButton> {
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
       onSelected: (value) {
-        _logout();
+        if (value == 'Manage Account') {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const ManageAccountPage(), fullscreenDialog: true));
+        } else {
+          _logout();
+        }
       },
       offset: const Offset(0, 60),
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'Manage Account',
+          child: Text('Manage Account'),
+        ),
         const PopupMenuItem<String>(
           value: 'Sign out',
           child: Text('Sign out'),

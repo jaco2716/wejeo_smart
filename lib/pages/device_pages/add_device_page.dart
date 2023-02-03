@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wejeo_smart/model/wifi_data.dart';
 import '../../logic/tuya_handler.dart';
 import '../../logic/validate_values.dart';
@@ -108,16 +109,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // selectedIndex == 0
-                    //     ? const SizedBox(width: 70)
-                    //     : SizedBox(
-                    //         width: 70,
-                    //         child: TextButton(
-                    //             onPressed: () {
-                    //               // FocusScope.of(context).requestFocus(FocusNode());
-                    //               controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    //             },
-                    //             child: const Text('Back'))),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: _buildPageIndicator(),
@@ -151,13 +142,18 @@ class _AddDevicePageState extends State<AddDevicePage> {
                                   child: ElevatedButton(
                                       onPressed: () {
                                         if (selectedIndex == 0) {
-                                          print('index 0');
                                           _formKey.currentState!.save();
                                           if (!_formKey.currentState!.validate()) {
                                             return;
                                           }
+
+                                          SharedPreferences.getInstance().then((prefs) {
+                                            Map<String, dynamic> ssidPass = {
+                                              _wifiData.ssid!: _wifiData.password,
+                                            };
+                                            prefs.setString('ssidPass', jsonEncode(ssidPass));
+                                          });
                                         } else if (selectedIndex == 1) {
-                                          print('index 1');
                                           _tuyaHandler.startParing(_wifiData.ssid!, _wifiData.password!, (deviceId) async {
                                             if (mounted) {
                                               showMyDialog(context, 'Success', message: "Successfully connected to device").then((value) {
@@ -238,18 +234,19 @@ class ConnectWithWifi extends StatefulWidget {
   const ConnectWithWifi({Key? key, required this.controller, required this.formKey}) : super(key: key);
 
   @override
-  _ConnectWithWifiState createState() => _ConnectWithWifiState();
+  State<ConnectWithWifi> createState() => _ConnectWithWifiState();
 }
 
 class _ConnectWithWifiState extends State<ConnectWithWifi> {
   // final _formKey = GlobalKey<FormState>();
   final TuyaHandler _tuyaHandler = TuyaHandler();
   final ValidateValues _validateValues = ValidateValues();
-  WifiData _wifiData = WifiData.sharedInstance();
+  final _wifiData = WifiData.sharedInstance();
   String? password;
   String? ssid;
   String? initialSsid;
-  late Future<String?> getWifiNameFuture;
+  String? initialPass;
+  late Future<List<String?>?> getWifiNameFuture;
 
   @override
   void initState() {
@@ -263,13 +260,14 @@ class _ConnectWithWifiState extends State<ConnectWithWifi> {
       child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(40),
-          child: FutureBuilder<String?>(
+          child: FutureBuilder<List<String?>?>(
               future: getWifiNameFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else {
-                  initialSsid = snapshot.data;
+                  initialSsid = snapshot.data?[0];
+                  initialPass = snapshot.data?[1];
 
                   return Column(
                     mainAxisSize: MainAxisSize.min,
@@ -289,59 +287,13 @@ class _ConnectWithWifiState extends State<ConnectWithWifi> {
                         validate: (value) => _validateValues.validateString(value),
                       ),
                       MyTextFieldWidget(
-                        icon: const Icon(Icons.lock),
                         labelText: 'Wifi password',
+                        icon: const Icon(Icons.lock),
+                        initialValue: initialPass,
                         setValue: (value) => _wifiData.password = value,
                         validate: (value) => _validateValues.validateString(value),
                       ),
                       const SizedBox(height: 20),
-                      // SizedBox(
-                      //     width: double.infinity,
-                      //     child: ElevatedButton(
-                      //         onPressed: () async {
-                      //           widget.formKey.currentState!.save();
-                      //           if (widget.formKey.currentState!.validate()) {
-                      //             WifiData wifiData = WifiData.sharedInstance();
-
-                      //             wifiData.ssid = ssid!;
-                      //             wifiData.password = password;
-
-                      //             FocusScope.of(context).requestFocus(FocusNode());
-                      //             widget.controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-
-                      //             // print("widget.groupId, $ssid!, $password!");
-                      //             // showMyDialog(
-                      //             //   context,
-                      //             //   'Connecting...',
-                      //             //   widgetContent: const MyCountDown(count: 100),
-                      //             //   infoDialog: false,
-                      //             //   onlyAction: true,
-                      //             //   barrierDismissible: false,
-                      //             //   confirmText: 'Cancel',
-                      //             //   myOnPressed: () {
-                      //             //     _tuyaHandler.stopParing();
-                      //             //     Navigator.pop(context);
-                      //             //   },
-                      //             // );
-                      //             // _tuyaHandler.startParing(ssid!, password!, 0, (deviceId) async {
-                      //             //   if (mounted) {
-                      //             //     Navigator.pop(context);
-                      //             //     showMyDialog(context, 'Success', message: "Successfully connected to device").then((value) {
-                      //             //       if (mounted) {
-                      //             //         Navigator.pop(context);
-                      //             //         setState(() {});
-                      //             //       }
-                      //             //     });
-                      //             //   }
-                      //             // }, (message) {
-                      //             //   if (mounted) {
-                      //             //     Navigator.pop(context);
-                      //             //     showMyDialog(context, 'Error', message: message);
-                      //             //   }
-                      //             // });
-                      //           }
-                      //         },
-                      //         child: const Text('Add Device'))),
                     ],
                   );
                 }

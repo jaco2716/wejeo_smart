@@ -133,5 +133,22 @@ class TuyaUserHandler : NSObject{
             }
         })
     }
+    ///
+    ///Deletes a user account. During the week following this delete operation, if the user is logged in again, the delete request is canceled.
+    ///If not, the user is permanently disabled and all its information is deleted after this week.
+    ///
+    func cancelAccount(result:@escaping FlutterResult) {
+        smartUser.cancelAccount({
+            print("cancel account success")
+            let message = "Success"
+            result(message)
+        }, failure: { (error) in
+            if let e = error?.localizedDescription {
+                result(FlutterError.init(code: " tuyaFailureError", message: e, details: nil))
+            } else{
+                result(nil)
+            }
+        })
+    }
     
 }

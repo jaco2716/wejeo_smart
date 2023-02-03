@@ -71,7 +71,7 @@ class _RegisterFormState extends State<RegisterForm> {
   // String? _repeatPassword;
   bool _hasAcceptedTerms = false;
   bool _showTermsNotAccepted = false;
-  CountryCode _countryCode = CountryCode(country: "Denmark", code: 45);
+  final _countryCode = CountryCode(country: "Denmark", code: 45);
 
   Future<void> _sendVerificationCode(String email, String countryCode) async {
     context.read<AuthAppState>().loginState = AppLoginState.registerUser;

@@ -56,13 +56,16 @@ class TuyaHomeHandler : NSObject{
         }
     }
     public func removeHome(result:@escaping FlutterResult, homeId: Int64) {
-        
-        self.currentHome?.dismiss(success: {
+        guard let homeWithID = TuyaSmartHome(homeId: homeId) else{
+            result(nil)
+            return
+        }
+        homeWithID.dismiss(success: {
             let message = "Success"
             result(message)
         }) { (error) in
             if let e = error {
-                result(FlutterError.init(code: " tuyaFailureError", message: "Add home failed: \(e)", details: nil))
+                result(FlutterError.init(code: " tuyaFailureError", message: "Remove home failed: \(e)", details: nil))
             }
         }
     }
@@ -93,7 +96,7 @@ class TuyaHomeHandler : NSObject{
                 self.initHome(homeId: firstID)
             }
             
-            let sortedHomes = myHomes//.sorted { $1.homeId == self.currentHome?.homeModel.homeId ? false : $0.homeId == self.currentHome?.homeModel.homeId ? true : $0.homeId < $1.homeId }
+            let sortedHomes = myHomes.sorted { $1.homeId == self.currentHome?.homeModel.homeId ? false : $0.homeId == self.currentHome?.homeModel.homeId ? true : $0.homeId < $1.homeId }
             
             let homeDictList = sortedHomes.reduce(into: [[AnyHashable: Any]]()) { array, value in
                 array.append(["name": value.name!, "homeId" : value.homeId, "geoName" : value.geoName!, "latitude" : value.latitude, "longitude" : value.longitude])

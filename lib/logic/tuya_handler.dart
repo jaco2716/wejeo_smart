@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:wejeo_smart/model/tuya_device.dart';
 import 'package:wejeo_smart/model/tuya_home.dart';
 import 'package:wejeo_smart/model/tuya_smart_timer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TuyaHandler extends ChangeNotifier {
   static const _methodChannel = MethodChannel('dk.wejeo.wejeoSmart/tuya');
@@ -84,17 +85,21 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
-  Future<String?> getWifiName() async {
+  Future<List<String?>?> getWifiName() async {
     try {
-      String? ssid;
+      final prefs = await SharedPreferences.getInstance();
+
+      // await prefs.setString('ssidPass', jsonEncode(ssidPass));
+      final Map<String, dynamic> ssidPass = jsonDecode(prefs.getString('ssidPass') ?? '{}') as Map<String, dynamic>;
+
       final NetworkInfo networkInfo = NetworkInfo();
-      //var status =
+
       await Permission.location.request();
       // print(status);
+      String? ssid = await networkInfo.getWifiName();
+      String? pass = ssidPass[ssid];
 
-      ssid = await networkInfo.getWifiName();
-
-      return ssid;
+      return [ssid, pass];
     } catch (e) {
       if (kDebugMode) {
         print('Error: $e');

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class WifiData {
   String? ssid;
   String? password;

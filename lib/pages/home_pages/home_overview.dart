@@ -40,7 +40,7 @@ class _HomeOverviewState extends State<HomeOverview> {
             children: [
               const Align(alignment: Alignment.centerLeft, child: Text('Devices', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20))),
               AddIconButton(onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddDevicePage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddDevicePage(), fullscreenDialog: true));
               }),
             ],
           ),

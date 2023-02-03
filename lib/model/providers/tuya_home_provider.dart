@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
 import 'package:wejeo_smart/model/tuya_home.dart';
 
@@ -17,8 +18,14 @@ class TuyaHomeProvider extends ChangeNotifier {
     homeList = await _tuyaHandler.getHomeList();
     if (homeList != null) {
       if (homeList!.isEmpty) {
-        await _tuyaHandler.addHome('My Home', '', '', 0, 0, (homeId) {}, (message) {});
+        await _tuyaHandler.addHome('My Home new', '', '', 0, 0, (homeId) {}, (message) {});
+        homeList = await _tuyaHandler.getHomeList();
       }
+    } else {
+      if (kDebugMode) {
+        print('Trying again to getHomeList');
+      }
+      homeList = await _tuyaHandler.getHomeList();
     }
     _connectionState = ConnectionState.done;
     notifyListeners();

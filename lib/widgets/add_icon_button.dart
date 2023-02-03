@@ -13,6 +13,5 @@ class AddIconButton extends StatelessWidget {
       iconSize: 35,
       icon: const Icon(Icons.add_rounded),
     );
-    ;
   }
 }

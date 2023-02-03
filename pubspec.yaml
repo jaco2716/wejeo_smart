@@ -43,6 +43,7 @@ dependencies:
   permission_handler: ^10.2.0
   json_annotation: ^4.8.0
   flutter_native_splash: ^2.2.16
+  shared_preferences: ^2.0.17
 
 dev_dependencies:
   flutter_test:

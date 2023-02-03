@@ -75,11 +75,7 @@ class _ScheduleListTileState extends State<ScheduleListTile> {
           onChanged: (value) async {
             TuyaHandler tuyaHandler = TuyaHandler();
             showMyLoadingDialog(context);
-            await tuyaHandler.updateTimerStatus(widget.deviceId, [widget.timer.timerId], widget.timer.status ? 0 : 1, (message) {
-              print('working');
-            }, (message) {
-              print('not working');
-            });
+            await tuyaHandler.updateTimerStatus(widget.deviceId, [widget.timer.timerId], widget.timer.status ? 0 : 1, (message) {}, (message) {});
 
             Future.delayed(
               const Duration(milliseconds: 200),
