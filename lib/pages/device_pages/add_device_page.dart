@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wejeo_smart/model/wifi_data.dart';
 import '../../logic/tuya_handler.dart';
 import '../../logic/validate_values.dart';
+import '../../widgets/blinking_power_icon.dart';
 import '../../widgets/my_alert_dialog.dart';
 import '../../widgets/my_count_down.dart';
 import '../../widgets/my_text_field.dart';
@@ -74,6 +75,18 @@ class _AddDevicePageState extends State<AddDevicePage> {
                     ),
                   ),
                   Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text('Confirm Reset', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                        Text('Make sure the reset indicator is blinking fast.', style: TextStyle(fontSize: 12, color: Colors.white70)),
+                        SizedBox(height: 0),
+                        BlinkingPowerIcon(durationMili: 290, title: 'Blinking Fast'),
+                        // BlinkingPowerIcon(durationMili: 1500, title: 'Blinking Slow'),
+                      ],
+                    ),
+                  ),
+                  Center(
                       child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: const [
@@ -82,23 +95,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
                       MyCountDown(count: 100),
                     ],
                   )),
-                  // Center(
-                  //   child: Column(
-                  //     mainAxisSize: MainAxisSize.min,
-                  //     children: [
-                  //       const Text('Select reset mode', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                  //       const Text('Hold the reset button for 5 secounds', style: TextStyle(fontSize: 12, color: Colors.white70)),
-                  //       const SizedBox(height: 40),
-                  //       Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //         children: const [
-                  //           BlinkingPowerIcon(durationMili: 290, title: 'Blinking Fast'),
-                  //           BlinkingPowerIcon(durationMili: 1500, title: 'Blinking Slow'),
-                  //         ],
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                 ],
               ),
             ),
@@ -125,16 +121,16 @@ class _AddDevicePageState extends State<AddDevicePage> {
                                   child: OutlinedButton(
                                       // style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
                                       onPressed: () {
-                                        if (selectedIndex == 2) {
+                                        if (selectedIndex == 3) {
                                           _tuyaHandler.stopParing();
                                         }
                                         FocusScope.of(context).requestFocus(FocusNode());
                                         controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
                                       },
-                                      child: Text(selectedIndex == 2 ? 'Cancel' : 'Back')),
+                                      child: Text(selectedIndex == 3 ? 'Cancel' : 'Back')),
                                 ),
                               ),
-                        selectedIndex == 2
+                        selectedIndex == 3
                             ? const SizedBox.shrink()
                             : Expanded(
                                 child: Padding(
@@ -153,7 +149,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
                                             };
                                             prefs.setString('ssidPass', jsonEncode(ssidPass));
                                           });
-                                        } else if (selectedIndex == 1) {
+                                        } else if (selectedIndex == 2) {
                                           _tuyaHandler.startParing(_wifiData.ssid!, _wifiData.password!, (deviceId) async {
                                             if (mounted) {
                                               showMyDialog(context, 'Success', message: "Successfully connected to device").then((value) {
@@ -190,7 +186,7 @@ class _AddDevicePageState extends State<AddDevicePage> {
 
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
       list.add(i == selectedIndex ? _indicator(true) : _indicator(false));
     }
     return list;

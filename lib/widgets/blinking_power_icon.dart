@@ -40,7 +40,7 @@ class _BlinkingPowerIconState extends State<BlinkingPowerIcon> {
     return Container(
       width: 150,
       height: 150,
-      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20)),
+      // decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20)),
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -48,15 +48,16 @@ class _BlinkingPowerIconState extends State<BlinkingPowerIcon> {
             Icon(
               Icons.power_settings_new_rounded,
               size: 50,
+              // color: isOn ? Colors.blueGrey[700] : Colors.lightBlue[100],
               color: isOn ? Colors.black : Colors.lightBlue[100],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Text(
+            //     widget.title,
+            //     style: const TextStyle(fontWeight: FontWeight.bold),
+            //   ),
+            // ),
           ],
         ),
       ),

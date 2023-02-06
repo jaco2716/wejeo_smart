@@ -29,6 +29,7 @@ class TuyaDeviceHandler : NSObject{
     let tuyaActivator: TuyaSmartActivator
     var smartDevice: TuyaSmartDevice?
     public var eventSink: FlutterEventSink?
+    var connectingWifiSsid: String?
     
     override
     private init(){
@@ -45,6 +46,7 @@ class TuyaDeviceHandler : NSObject{
     //--------------------------------------------------------------------------
     //Paring device
     public func startParing(result:@escaping FlutterResult, homeId: Int64, password: String, ssid: String, mode: Int){
+        connectingWifiSsid = ssid
         
         print("Started Paring device: homeId: \(homeId), password: \(password), ssid: \(ssid)")
         self.getToken(result: result, homeId: homeId, ssid: ssid, password: password, mode: mode)
@@ -78,9 +80,6 @@ class TuyaDeviceHandler : NSObject{
         TuyaSmartActivator.sharedInstance()?.startConfigWiFi(activatorMode, ssid: ssid, password: password, token: token, timeout: 100)
         print("Config started with mode: \(activatorMode), ssid: \(ssid), password: \(password)")
         flutterResult = result
-    }
-    public func returnDevicePairResult(message: String){
-        self.flutterResult?(message)
     }
     
     

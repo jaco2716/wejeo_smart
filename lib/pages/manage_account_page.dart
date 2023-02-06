@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wejeo_smart/logic/auth_app_state.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
 import 'package:wejeo_smart/widgets/my_alert_dialog.dart';
@@ -19,7 +20,7 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
     return '${date.day} ${months[currentMon - 1]}';
   }
 
-  void deleteAccount() {
+  void _deleteAccount() {
     final authAppState = AuthAppState();
 
     Navigator.pop(context);
@@ -33,6 +34,22 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
         Navigator.pop(context);
         showMyDialog(context, '', message: message);
       }
+    });
+  }
+
+  Future<void> _logout() async {
+    showMyDialog(context, 'Signing out?', message: 'Do you want to sign out?', confirmText: 'Sign out', infoDialog: false, myOnPressed: () async {
+      showMyLoadingDialog(context);
+      await context.read<AuthAppState>().logOutUser(() {
+        if (mounted) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+        }
+      }, (message) {
+        if (mounted) {
+          Navigator.popUntil(context, (route) => route.isFirst);
+          showMyDialog(context, 'Error', message: message);
+        }
+      });
     });
   }
 
@@ -52,8 +69,6 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
               const Text('Manage Account', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               Text(
-                  // 'Deletes a user account. During the week following this delete operation, if the user is logged in again, '
-                  // 'the delete request is canceled. If not, the user is permanently disabled and all its information is deleted after this week.',
                   'By pressing "Delete Account" your account and all information will be deleted 1 week from now.\n\nIf you sign in to your account before $dateString your account will not be deleted.',
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontSize: 12, color: Colors.white70)),
@@ -66,11 +81,28 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
                       'Delete Account',
                       message: 'Are you sure you want to delete account?',
                       infoDialog: false,
-                      myOnPressed: () => deleteAccount(),
+                      myOnPressed: () => _deleteAccount(),
                     );
                   },
                   icon: const Icon(Icons.delete),
-                  label: const Text('Delete Account'))
+                  label: const Text('Delete Account')),
+              const Divider(),
+              const SizedBox(height: 20),
+              const Text('Sign out of your account.', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, color: Colors.white70)),
+              TextButton.icon(
+                  style: TextButton.styleFrom(foregroundColor: Colors.amber),
+                  onPressed: () {
+                    showMyDialog(
+                      context,
+                      'Signing Out?',
+                      message: 'Do you want to sign out?',
+                      confirmText: 'Sign Out',
+                      infoDialog: false,
+                      myOnPressed: () => _logout(),
+                    );
+                  },
+                  icon: const Icon(Icons.logout_rounded),
+                  label: const Text('Sign Out'))
             ],
           ),
         ),

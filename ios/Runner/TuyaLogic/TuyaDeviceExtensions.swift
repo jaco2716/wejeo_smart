@@ -18,14 +18,21 @@ extension TuyaDeviceHandler: TuyaSmartActivatorDelegate {
             print("name: \(deviceModel.name ?? "Null"), name: \(deviceModel.uiName ?? "Null"), ")
             LocalDataHandler.currentDeviceId = deviceModel.devId
             self.initDevice(deviceId: deviceModel.devId)
-            self.returnDevicePairResult(message: "Success:\(deviceModel.devId ?? "Null")")
+
+            self.flutterResult?("Success:\(deviceModel.devId ?? "Null")")
+//            self.returnDevicePairResult(message: "Success:\(deviceModel.devId ?? "Null")")
         }
         
         if let e = error {
             print("Failed to pair device!")
             print("\(e)")
-            self.returnDevicePairResult(message: "Failed to pair device")
+            self.flutterResult?("Failed to pair device")
+//            self.returnDevicePairResult(message: "Failed to pair device")
         }
+        
+    }
+    
+    func activator(_ activator: TuyaSmartActivator!, didPassWIFIToSecurityLevelDeviceWithUUID uuid: String!) {
         
     }
 }
