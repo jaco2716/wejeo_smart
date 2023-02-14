@@ -69,10 +69,10 @@ class TuyaUserHandler : NSObject{
     ///
     ///check the verification code in to the Tuya Platform
     ///
-    public func checkVerificationCode(result:@escaping FlutterResult, countryCode: String, email: String, verificationCode: String){
+    public func checkVerificationCode(result:@escaping FlutterResult, countryCode: String, email: String, verificationCode: String, type: Int){
         let region = smartUser.getDefaultRegion(withCountryCode: countryCode)
         
-        smartUser.checkCode(withUserName: email, region: region, countryCode: countryCode, code: verificationCode, type: 1) { value in
+        smartUser.checkCode(withUserName: email, region: region, countryCode: countryCode, code: verificationCode, type: type) { value in
             if(value){
                 result("Success")
             } else{
@@ -133,6 +133,7 @@ class TuyaUserHandler : NSObject{
             }
         })
     }
+    
     ///
     ///Deletes a user account. During the week following this delete operation, if the user is logged in again, the delete request is canceled.
     ///If not, the user is permanently disabled and all its information is deleted after this week.

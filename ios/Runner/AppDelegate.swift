@@ -86,8 +86,9 @@ import TuyaSmartBaseKit
             if let args = call.arguments as? Dictionary<String, Any>,
                let email = args["email"] as? String,
                let countryCode = args["countryCode"] as? String,
-               let verificationCode = args["verificationCode"] as? String {
-                tuyaUserHandler.checkVerificationCode(result: result, countryCode: countryCode, email: email, verificationCode: verificationCode)
+               let verificationCode = args["verificationCode"] as? String,
+               let type = args["type"] as? Int {
+                tuyaUserHandler.checkVerificationCode(result: result, countryCode: countryCode, email: email, verificationCode: verificationCode, type: type)
             } else {
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }
@@ -170,10 +171,12 @@ import TuyaSmartBaseKit
         } else if (call.method == "stopParing"){
             tuyaDeviceHandler.stopParing()
             
-        } else if (call.method == "getCurrentHomeDeviceList"){
-            tuyaDeviceHandler.getCurrentHomeDeviceList(result: result)
-            
-        } else if (call.method == "setCurrentDevice"){
+        }
+//        else if (call.method == "getCurrentHomeDeviceList"){
+//            tuyaDeviceHandler.getCurrentHomeDeviceList(result: result)
+//
+//        }
+        else if (call.method == "setCurrentDevice"){
             if let devId = call.arguments as? String {
                 tuyaDeviceHandler.setCurrentDevice(result: result, devId: devId)
             } else {
@@ -197,21 +200,24 @@ import TuyaSmartBaseKit
                 result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
             }
             
-        } else if (call.method == "getDeviceProperties"){
-            if let deviceId = call.arguments as? String {
-                tuyaDeviceHandler.getDeviceProperties(result: result, deviceId: deviceId)
-            } else {
-                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
-            }
-            
-        } else if (call.method == "getDeviceListFromHomeId"){
-            if let homeId = call.arguments as? Int64 {
-                tuyaDeviceHandler.getDeviceListFromHomeId(result: result, homeId: homeId)
-            } else {
-                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
-            }
-            
-        } else if (call.method == "modifyDeviceName"){
+        }
+//        else if (call.method == "getDeviceProperties"){
+//            if let deviceId = call.arguments as? String {
+//                tuyaDeviceHandler.getDeviceProperties(result: result, deviceId: deviceId)
+//            } else {
+//                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+//            }
+//
+//        }
+//        else if (call.method == "getDeviceListFromHomeId"){
+//            if let homeId = call.arguments as? Int64 {
+//                tuyaDeviceHandler.getDeviceListFromHomeId(result: result, homeId: homeId)
+//            } else {
+//                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+//            }
+//
+//        }
+        else if (call.method == "modifyDeviceName"){
             if  let args = call.arguments as? Dictionary<String, Any>,
                 let deviceId = args["deviceId"] as? String,
                 let name = args["name"] as? String{

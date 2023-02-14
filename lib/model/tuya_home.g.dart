@@ -10,14 +10,14 @@ TuyaHome _$TuyaHomeFromJson(Map<String, dynamic> json) => TuyaHome(
       name: json['name'] as String,
       homeId: json['homeId'] as int,
       geoName: json['geoName'] as String? ?? '',
-      latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
-      longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
+      lat: (json['lat'] as num?)?.toDouble() ?? 0,
+      lon: (json['lon'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$TuyaHomeToJson(TuyaHome instance) => <String, dynamic>{
       'name': instance.name,
       'homeId': instance.homeId,
       'geoName': instance.geoName,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
+      'lat': instance.lat,
+      'lon': instance.lon,
     };

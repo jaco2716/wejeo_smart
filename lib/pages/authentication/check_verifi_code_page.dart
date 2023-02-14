@@ -27,7 +27,15 @@ class _CheckVerifiCodePageState extends State<CheckVerifiCodePage> {
 
   Future<void> _checkVerificationCode(String email, String countryCode, String verificationCode) async {
     showMyLoadingDialog(context);
-    await context.read<AuthAppState>().checkVerificationCode(email, countryCode, verificationCode, () {
+    var appAuthState = context.read<AuthAppState>();
+    VerificationType type;
+    if (appAuthState.loginState == AppLoginState.resetPassword) {
+      type = VerificationType.resetPassword;
+    } else {
+      type = VerificationType.registerUser;
+    }
+
+    await appAuthState.checkVerificationCode(email, countryCode, verificationCode, type, () {
       if (mounted) {
         Navigator.push(
             context,

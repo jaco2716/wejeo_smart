@@ -99,103 +99,103 @@ class TuyaDeviceHandler : NSObject{
         result(nil)
     }
     
-    public func getCurrentHomeDeviceList(result:@escaping FlutterResult){
-        guard let currentHome = TuyaHomeHandler.sharedInstance.currentHome else{
-            result("nil home")
-            return
-        }
-        
-        currentHome.getDataWithSuccess( { (home) in
-            // The value of `homeId` for the home.
-            
-            guard let deviceList = currentHome.deviceList else {
-                print("Get Device failed")
-                result(nil)
-                return
-            }
-            print(deviceList)
-            let deviceDictList = deviceList.reduce(into: [[AnyHashable: Any]]()) { array, value in
-                array.append(["name": value.name!,
-                              "devId" : value.devId!,
-                              "isOnline" : value.isOnline,
-                              "dps" : value.dps!,
-                              "deviceType" : value.deviceType.rawValue,
-                              "homeId" : value.homeId,
-                              "roomId" : value.roomId
-                ])
-            }
-            
-            print(deviceDictList)
-            result(deviceDictList.toJSONString())
-            
-        }, failure: {error in
-            print("Failed to get home data")
-            result(nil)
-        })
-        
-    }
+//    public func getCurrentHomeDeviceList(result:@escaping FlutterResult){
+//        guard let currentHome = TuyaHomeHandler.sharedInstance.currentHome else{
+//            result("nil home")
+//            return
+//        }
+//
+//        currentHome.getDataWithSuccess( { (home) in
+//            // The value of `homeId` for the home.
+//
+//            guard let deviceList = currentHome.deviceList else {
+//                print("Get Device failed")
+//                result(nil)
+//                return
+//            }
+//            print(deviceList)
+//            let deviceDictList = deviceList.reduce(into: [[AnyHashable: Any]]()) { array, value in
+//                array.append(["name": value.name!,
+//                              "devId" : value.devId!,
+//                              "isOnline" : value.isOnline,
+//                              "dps" : value.dps!,
+//                              "deviceType" : value.deviceType.rawValue,
+//                              "homeId" : value.homeId,
+//                              "roomId" : value.roomId
+//                ])
+//            }
+//
+//            print(deviceDictList)
+//            result(deviceDictList.toJSONString())
+//
+//        }, failure: {error in
+//            print("Failed to get home data")
+//            result(nil)
+//        })
+//
+//    }
     
-    public func getDeviceListFromHomeId(result:@escaping FlutterResult, homeId: Int64){
-        guard let homeFromId = TuyaSmartHome(homeId: homeId) else{
-            result("nil home")
-            return
-        }
-        
-        homeFromId.getDataWithSuccess( { (home) in
-            // The value of `homeId` for the home.
-            
-            guard let deviceList = homeFromId.deviceList else {
-                print("Get Device failed")
-                result(nil)
-                return
-            }
-            print(deviceList)
-            let deviceDictList = deviceList.reduce(into: [[AnyHashable: Any]]()) { array, value in
-                array.append(["name": value.name!, "devId" : value.devId!])
-            }
-            
-            print(deviceDictList)
-            result(deviceDictList.toJSONString())
-            
-        }, failure: {error in
-            print("Failed to get home data")
-            result(nil)
-        })
-        
-    }
+//    public func getDeviceListFromHomeId(result:@escaping FlutterResult, homeId: Int64){
+//        guard let homeFromId = TuyaSmartHome(homeId: homeId) else{
+//            result("nil home")
+//            return
+//        }
+//
+//        homeFromId.getDataWithSuccess( { (home) in
+//            // The value of `homeId` for the home.
+//
+//            guard let deviceList = homeFromId.deviceList else {
+//                print("Get Device failed")
+//                result(nil)
+//                return
+//            }
+//            print(deviceList)
+//            let deviceDictList = deviceList.reduce(into: [[AnyHashable: Any]]()) { array, value in
+//                array.append(["name": value.name!, "devId" : value.devId!])
+//            }
+//
+//            print(deviceDictList)
+//            result(deviceDictList.toJSONString())
+//
+//        }, failure: {error in
+//            print("Failed to get home data")
+//            result(nil)
+//        })
+//
+//    }
     
-    public func getDeviceProperties(result:@escaping FlutterResult, deviceId: String){
-        let deviceFromId = TuyaSmartDevice(deviceId: deviceId)
-        guard let device = deviceFromId else {
-            print("Failed to get device.")
-            result(nil)
-            return
-        }
-        LocalDataHandler.currentDeviceId = device.deviceModel.devId
-        self.initDevice(deviceId: device.deviceModel.devId)
-        self.smartDevice = device
-        self.smartDevice?.delegate = self
-        guard let schemaArray = device.deviceModel.schemaArray else{
-            print("Failed to get schemaArray.")
-            result(nil)
-            return
-        }
-        
-        
-        
-        let schemaDictList = schemaArray.reduce(into: [[AnyHashable: Any]]()) { array, value in
-            //            print("Property\(value.property.yy_modelToJSONString()!)")
-            array.append(["code": value.code!,
-                          "name":value.name!,
-                          "dpId" : value.dpId!,
-                          "mode": value.mode!,
-                          "type":value.type!,
-                          "property": value.property.yy_modelToJSONString()!
-            ])
-        }
-        //        schemaDictList.append(["isOnline" : self.smartDevice?.deviceModel.isOnline ?? false])
-        result(schemaDictList.toJSONString())
-    }
+//    public func getDeviceProperties(result:@escaping FlutterResult, deviceId: String){
+//        let deviceFromId = TuyaSmartDevice(deviceId: deviceId)
+//        guard let device = deviceFromId else {
+//            print("Failed to get device.")
+//            result(nil)
+//            return
+//        }
+//        LocalDataHandler.currentDeviceId = device.deviceModel.devId
+//        self.initDevice(deviceId: device.deviceModel.devId)
+//        self.smartDevice = device
+//        self.smartDevice?.delegate = self
+//        guard let schemaArray = device.deviceModel.schemaArray else{
+//            print("Failed to get schemaArray.")
+//            result(nil)
+//            return
+//        }
+//
+//
+//
+//        let schemaDictList = schemaArray.reduce(into: [[AnyHashable: Any]]()) { array, value in
+//            //            print("Property\(value.property.yy_modelToJSONString()!)")
+//            array.append(["code": value.code!,
+//                          "name":value.name!,
+//                          "dpId" : value.dpId!,
+//                          "mode": value.mode!,
+//                          "type":value.type!,
+//                          "property": value.property.yy_modelToJSONString()!
+//            ])
+//        }
+//        //        schemaDictList.append(["isOnline" : self.smartDevice?.deviceModel.isOnline ?? false])
+//        result(schemaDictList.toJSONString())
+//    }
     
     ///
     ///Set device Name

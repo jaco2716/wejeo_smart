@@ -99,7 +99,7 @@ class TuyaHomeHandler : NSObject{
             let sortedHomes = myHomes.sorted { $1.homeId == self.currentHome?.homeModel.homeId ? false : $0.homeId == self.currentHome?.homeModel.homeId ? true : $0.homeId < $1.homeId }
             
             let homeDictList = sortedHomes.reduce(into: [[AnyHashable: Any]]()) { array, value in
-                array.append(["name": value.name!, "homeId" : value.homeId, "geoName" : value.geoName!, "latitude" : value.latitude, "longitude" : value.longitude])
+                array.append(["name": value.name!, "homeId" : value.homeId, "geoName" : value.geoName!, "lat" : value.latitude, "lon" : value.longitude])
             }
             
             result(homeDictList.toJSONString())

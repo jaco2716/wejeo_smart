@@ -3,6 +3,21 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+
+        // Tuya Setup
+        jcenter()
+        maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
+        maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
+        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven {
+            url 'http://central.maven.org/maven2/'
+            allowInsecureProtocol = true
+        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://developer.huawei.com/repo/' }
+
     }
 
     dependencies {
@@ -15,6 +30,20 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+
+        // Tuya Setup
+        jcenter()
+        maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
+        maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
+        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven {
+            url 'http://central.maven.org/maven2/'
+            allowInsecureProtocol = true
+        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 

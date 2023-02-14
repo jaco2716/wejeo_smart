@@ -1,4 +1,6 @@
 # WEJEO SMART 
+
+Flutter version 3.3.10
 ## Commands
 ### Build JsonSerializable model classes:
 ```yaml
@@ -81,8 +83,8 @@ Paste in info.plist for location and bluetooth (Location needed for WIFI info an
 <string>Local Network is required for some features</string>
 ```
 ---
-## TUYA IOS SDK SETUP
-
+## TUYA SDK SETUP
+### IOS
 
 * Update CocoaPods to the latest version. 
 [sudo] gem install cocoapods
@@ -148,3 +150,124 @@ Create AppKey.swift file and pase code(Change values to your key and secret):
     }
 ```
 ---
+
+### Android
+* Get SHA256 key:
+1. Navigate to the Gradle tab at the right side of Android Studio.
+2. Click The elephant "Execute Gradle Task".
+3. Write  "gradle signingReport" and enter.
+4. Add Key in Tuya Platform
+
+* Add dependencies to the build.gradle(app) file of the Android project.
+```gradle
+android {
+	defaultConfig {
+		ndk {
+			abiFilters "armeabi-v7a", "arm64-v8a"
+		}
+	}
+	packagingOptions {
+		pickFirst 'lib/*/libc++_shared.so' // An Android Archive (AAR) file contains an Android library. If the .so file exists in multiple AAR files, select the first AAR file.
+	}
+}
+dependencies {
+	implementation 'com.alibaba:fastjson:1.1.67.android'
+  implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.14.9'
+
+  // The latest stable App SDK for Android.
+  implementation 'com.tuya.smart:tuyasmart:4.0.3'
+}
+```
+
+* Add the Tuya IoT Maven repository URL to the build.gradle file in the root directory. (Add to both "buildscript" & "allprojects")
+```
+ repositories {
+        google()
+        mavenCentral()
+
+        // Tuya Setup
+        jcenter()
+        maven { url 'https://maven-other.tuya.com/repository/maven-releases/' }
+        maven { url "https://maven-other.tuya.com/repository/maven-commercial-releases/" }
+        maven { url 'https://jitpack.io' }
+
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven {
+            url 'http://central.maven.org/maven2/'
+            allowInsecureProtocol = true
+        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://developer.huawei.com/repo/' }
+
+    }
+```
+* Log in to the Tuya IoT Development Platform, go to the SDK Development page, and then click the SDK to be managed.
+* On the page that appears, click the Get Key tab and click Download in the App Security Image for Android field.
+* Rename the security image as t_s.bmp and put the image in the assets folder of your project. (Create Assets folder in "app->src->main->assets" in Project view)
+
+* Return to the Android project, configure appkey and appSecret in AndroidManifest.xml, and then set permissions for the app.
+```xml
+<meta-data
+android:name="TUYA_SMART_APPKEY"
+android:value="APP_KEY" />
+<meta-data
+android:name="TUYA_SMART_SECRET"
+android:value="APP_SECRET" />
+```
+* Configure obfuscation in proguard-rules.pro. (Create "proguard-rules.pro" file in "app->src->" and paste code)
+```pro
+#fastJson
+-keep class com.alibaba.fastjson.**{*;}
+-dontwarn com.alibaba.fastjson.**
+
+#mqtt
+-keep class com.tuya.smart.mqttclient.mqttv3.** { *; }
+-dontwarn com.tuya.smart.mqttclient.mqttv3.**
+
+#OkHttp3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+-keep class okio.** { *; }
+-dontwarn okio.**
+
+-keep class com.tuya.**{*;}
+-dontwarn com.tuya.**
+```
+* In build.gradle (app) 
+```gralde
+buildTypes {
+  release {
+    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    // Other code ...
+  }
+}
+```
+* Initialize the SDK in Application. Make sure that all processes are initialized. Example: (Create kotlin file with your AppName in "app->src->main->kotlin->domain->)
+```kotlin
+class AppName : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        application = this
+        TuyaHomeSdk.init(this, "APP_KEY", "APP_SECRET")
+        TuyaHomeSdk.setDebugMode(true)
+    }
+}
+```
+* Change android:name="" in `<application tag` to the file you created. and add `tools:replace="android:label"`
+```xml
+android:name=".AppNameFile"
+tools:replace="android:label"
+```
+* Change android:name="" in `<activity tag` to ".MainActivity"
+```xml
+android:name=".MainActivity"
+```
+* Add to MainActivity file
+```kotlin
+ override fun onDestroy() {       
+    super.onDestroy()            
+    TuyaHomeSdk.onDestroy()      
+}                                
+```

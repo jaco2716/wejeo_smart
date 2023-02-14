@@ -7,15 +7,15 @@ class TuyaHome {
   String name;
   int homeId;
   String geoName;
-  double latitude;
-  double longitude;
+  double lat;
+  double lon;
 
   TuyaHome({
     required this.name,
     required this.homeId,
     this.geoName = '',
-    this.latitude = 0,
-    this.longitude = 0,
+    this.lat = 0,
+    this.lon = 0,
   });
 
   factory TuyaHome.fromJson(Map<String, dynamic> json) => _$TuyaHomeFromJson(json);

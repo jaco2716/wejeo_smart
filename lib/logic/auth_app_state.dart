@@ -33,6 +33,7 @@ class AuthAppState extends ChangeNotifier {
   Future<void> checkLogin() async {
     try {
       final bool result = await _methodChannel.invokeMethod('checkIsLoggedIn');
+
       if (result) {
         _loginState = AppLoginState.loggedIn;
       } else {
@@ -109,6 +110,13 @@ class AuthAppState extends ChangeNotifier {
     }
   }
 
+  ///
+  /// Send verificationCode
+  ///
+  /// Type:
+  /// * 1: register an account with an email address
+  /// * 2: login to the app with an email address
+  /// * 3: reset the password of an account that is registered with an email address
   Future<void> sendVerificationCode(
     String email,
     String countryCode,
@@ -143,6 +151,7 @@ class AuthAppState extends ChangeNotifier {
     String email,
     String countryCode,
     String verificationCode,
+    VerificationType type,
     void Function() successCallback,
     void Function(String message) errorCallback,
   ) async {
@@ -151,6 +160,7 @@ class AuthAppState extends ChangeNotifier {
         'email': email,
         'countryCode': countryCode,
         'verificationCode': verificationCode,
+        'type': type.index,
       };
       final String result = await _methodChannel.invokeMethod('checkVerificationCode', args);
       if (kDebugMode) {

@@ -52,7 +52,7 @@ class ValidateValues {
 
   String? validatePassword(String? value) {
     try {
-      return value!.length < 6 ? 'Password must be at least 8 characters.assword skal være midst 6 tegn.' : null;
+      return value!.length < 6 ? 'Password must be at least 8 characters.' : null;
     } catch (e) {
       return 'Password must be at least 8 characters.';
     }

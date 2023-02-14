@@ -18,8 +18,8 @@ class TuyaHandler extends ChangeNotifier {
   /// * `"name"` : String? The name of the Home
   /// * `"homeId"` : Int The id of the Home
   /// * `"geoName"` : String? The location of the Home
-  /// * `"latitude"` : Double The latitude of the Home
-  /// * `"longitude"` : Double The longitude of the Home
+  /// * `"lat"` : Double The latitude of the Home
+  /// * `"lon"` : Double The longitude of the Home
   ///
   Future<List<TuyaHome>?> getHomeList() async {
     try {
@@ -187,40 +187,22 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
-  ///
-  /// Get a list of devices as Json objects (Map<String, dynamic>) under current home
-  ///
-  /// Device model values:
-  /// * `"name"` : String? The name of the Home
-  /// * `"devId"` : String? The id of the Home
-  /// * `"isOnline"` : bool Indicates whether a device is online.
-  /// * `"dps"` : Map<String, dynamic>? The data points (DPs) of a device.
-  /// * `"deviceType"` : Enum? The type of device.
-  /// * `"homeId"` : int The ID of the home that a device belongs to.
-  /// * `"roomId"` : int The ID of the room that a device belongs to.
-  ///
-  Future<List<Map<String, dynamic>>?> getCurrentHomeDeviceList() async {
-    try {
-      // Map<String, dynamic>? result = await platform.invokeMethod('getCurrentHomeDeviceList');
-      var result = await _methodChannel.invokeMethod<String?>('getCurrentHomeDeviceList');
-      List<dynamic> resultList = [];
-      if (result != null) {
-        resultList = jsonDecode(result);
-      }
-      List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
-      return mapResult;
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('Error: $e');
-      }
-      return null;
-    }
-  }
-
-  // Future<List<Map<String, dynamic>>?> getDeviceListFromHomeId(int homeId) async {
+  // ///
+  // /// Get a list of devices as Json objects (Map<String, dynamic>) under current home
+  // ///
+  // /// Device model values:
+  // /// * `"name"` : String? The name of the Home
+  // /// * `"devId"` : String? The id of the Home
+  // /// * `"isOnline"` : bool Indicates whether a device is online.
+  // /// * `"dps"` : Map<String, dynamic>? The data points (DPs) of a device.
+  // /// * `"deviceType"` : Enum? The type of device.
+  // /// * `"homeId"` : int The ID of the home that a device belongs to.
+  // /// * `"roomId"` : int The ID of the room that a device belongs to.
+  // ///
+  // Future<List<Map<String, dynamic>>?> getCurrentHomeDeviceList() async {
   //   try {
   //     // Map<String, dynamic>? result = await platform.invokeMethod('getCurrentHomeDeviceList');
-  //     var result = await _methodChannel.invokeMethod<String?>('getDeviceListFromHomeId', homeId);
+  //     var result = await _methodChannel.invokeMethod<String?>('getCurrentHomeDeviceList');
   //     List<dynamic> resultList = [];
   //     if (result != null) {
   //       resultList = jsonDecode(result);
@@ -367,19 +349,19 @@ class TuyaHandler extends ChangeNotifier {
     }
   }
 
-  Future<List<Map<String, dynamic>>?> getDeviceProperties(String deviceId) async {
-    try {
-      var result = await _methodChannel.invokeMethod<String?>('getDeviceProperties', deviceId);
-      List<dynamic> resultList = jsonDecode(result ?? '[]');
-      List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
-      return mapResult;
-    } on PlatformException catch (e) {
-      if (kDebugMode) {
-        print('Error: $e');
-      }
-      return null;
-    }
-  }
+  // Future<List<Map<String, dynamic>>?> getDeviceProperties(String deviceId) async {
+  //   try {
+  //     var result = await _methodChannel.invokeMethod<String?>('getDeviceProperties', deviceId);
+  //     List<dynamic> resultList = jsonDecode(result ?? '[]');
+  //     List<Map<String, dynamic>> mapResult = resultList.map((e) => e as Map<String, dynamic>).toList();
+  //     return mapResult;
+  //   } on PlatformException catch (e) {
+  //     if (kDebugMode) {
+  //       print('Error: $e');
+  //     }
+  //     return null;
+  //   }
+  // }
 
   Future<void> removeDevice(
     String deviceId,

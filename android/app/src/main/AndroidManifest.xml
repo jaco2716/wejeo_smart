@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="dk.wejeo.wejeo_smart">
    <application
+        tools:replace="android:label"
         android:label="Wejeo Smart"
-        android:name="${applicationName}"
+        android:name=".WejeoSmart"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -12,6 +14,15 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+
+            <!-- Tuya Setup -->
+            <meta-data
+                android:name="TUYA_SMART_APPKEY"
+                android:value="c9turmwnftkwm7wmetxd" />
+            <meta-data
+                android:name="TUYA_SMART_SECRET"
+                android:value="85evxdqjgvkc9sucqd7yka7htqnwqe49" />
+
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
