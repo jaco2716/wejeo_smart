@@ -15,7 +15,7 @@ extension TuyaHomeHandler: TuyaSmartHomeDelegate {
     }
     
     func updateDeviceData(home: TuyaSmartHome!, device: TuyaSmartDeviceModel!) -> String {
-        var devicesDps: [[AnyHashable : Any]] = []
+        var devicesListMap: [[AnyHashable : Any]] = []
         
         for device in home.deviceList {
             let data: [AnyHashable : Any] = [
@@ -29,10 +29,10 @@ extension TuyaHomeHandler: TuyaSmartHomeDelegate {
                 "homeId": device.homeId,
                 "roomId": device.roomId,
             ]
-            devicesDps.append(data)
+            devicesListMap.append(data)
         }
 //        print(devicesDps.toJSONString())
-        return devicesDps.toJSONString()
+        return devicesListMap.toJSONString()
     }
     
     // Home information such as a home name is changed.
@@ -151,7 +151,7 @@ extension TuyaHomeHandler: FlutterStreamHandler {
         
         home.getDataWithSuccess({ (homeModel) in
             print("got home success \(homeModel?.geoName ?? "nil")")
-            var devicesDps: [[AnyHashable : Any]] = []
+            var devicesListMap: [[AnyHashable : Any]] = []
             for device in home.deviceList {
                 let data: [AnyHashable : Any] = [
                     "name": device.name!,
@@ -164,11 +164,11 @@ extension TuyaHomeHandler: FlutterStreamHandler {
                     "homeId": device.homeId,
                     "roomId": device.roomId,
                 ]
-                devicesDps.append(data)
+                devicesListMap.append(data)
             }
             
     //        print("Stream Data:\(devicesDps.toJSONString())")
-            events(devicesDps.toJSONString())
+            events(devicesListMap.toJSONString())
         }, failure: { (error) in
             if let e = error?.localizedDescription {
                 events(FlutterError.init(code: " tuyaFailureError", message: e, details: nil))

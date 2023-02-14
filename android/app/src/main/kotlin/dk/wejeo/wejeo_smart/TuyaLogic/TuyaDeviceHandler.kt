@@ -12,10 +12,14 @@ import com.tuya.smart.sdk.bean.DeviceBean
 import com.tuya.smart.sdk.enums.ActivatorModelEnum
 import dk.wejeo.wejeo_smart.LocalDataHandler
 import dk.wejeo.wejeo_smart.WejeoSmart.Companion.context
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 
-class TuyaDeviceHandler {
+open class TuyaDeviceHandler {
+
+    val LOG_TAG = "TuyaDeviceConfigEZ"
+    var eventSink: EventChannel.EventSink? = null
 
     lateinit var mTuyaActivator: ITuyaActivator
 //    static let sharedInstance = TuyaDeviceHandler()
@@ -50,7 +54,7 @@ class TuyaDeviceHandler {
 
 //        connectingWifiSsid = ssid
 
-        print("Started Paring device: homeId: $homeId, password: $password, ssid: $ssid")
+        Log.i(LOG_TAG,"Started Paring device: homeId: $homeId, password: $password, ssid: $ssid")
         getToken(result, homeId, ssid, password, mode)
     }
 
@@ -93,14 +97,14 @@ class TuyaDeviceHandler {
             .setToken(token)
             .setListener(object : ITuyaSmartActivatorListener {
                 override fun onStep(step: String?, data: Any?) {
-                    Log.i("TuyaDeviceConfigEZ", "$step --> $data")
+                    Log.i(LOG_TAG, "$step --> $data")
                 }
 
                 override fun onActiveSuccess(devResp: DeviceBean?) {
 
                     if (devResp != null) {
 
-                        Log.i("TuyaDeviceConfigEZ", "Device paired!")
+                        Log.i(LOG_TAG, "Device paired!")
 
                         LocalDataHandler.currentDeviceId = devResp.devId
 //                    self.initDevice(deviceId: devResp.devId)
@@ -125,13 +129,13 @@ class TuyaDeviceHandler {
         mTuyaActivator.start()
 
 
-        Log.i("TuyaDeviceConfigEZ", "Config started with , ssid: $ssid, password: $password")
+        Log.i(LOG_TAG, "Config started with , ssid: $ssid, password: $password")
 //        flutterResult = result
     }
 
 
     fun stopParing() {
-        Log.i("TuyaDeviceConfigEZ","Stopping config")
+        Log.i(LOG_TAG,"Stopping config")
         mTuyaActivator.stop()
     }
 
@@ -227,7 +231,7 @@ class TuyaDeviceHandler {
         val deviceFromId = TuyaHomeSdk.newDeviceInstance(deviceId)
         deviceFromId.renameDevice(name, object : IResultCallback {
             override fun onError(code: String?, error: String?) {
-                result.error(code.toString(), error, "Failed to login")
+                result.error(code.toString(), error, "Failed to rename device")
             }
 
            override fun onSuccess() {
@@ -253,7 +257,7 @@ class TuyaDeviceHandler {
             val newDps = {dpId to !dps}
             deviceFromId.publishDps(newDps.toString(), object : IResultCallback{
                 override fun onError(code: String?, error: String?) {
-                    result.error(code.toString(), error, "Failed to login")
+                    result.error(code.toString(), error, "Failed to set dps")
                 }
 
                 override fun onSuccess() {
@@ -282,7 +286,7 @@ class TuyaDeviceHandler {
         val deviceFromId = TuyaHomeSdk.newDeviceInstance(deviceId)
 deviceFromId.removeDevice(object :IResultCallback{
     override fun onError(code: String?, error: String?) {
-        result.error(code.toString(), error, "Failed to login")
+        result.error(code.toString(), error, "Failed to remove device")
     }
 
     override fun onSuccess() {

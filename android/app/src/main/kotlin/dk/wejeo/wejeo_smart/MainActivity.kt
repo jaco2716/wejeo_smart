@@ -1,16 +1,16 @@
 package dk.wejeo.wejeo_smart
 
+import android.util.Log
 import androidx.annotation.NonNull
 import com.tuya.smart.home.sdk.TuyaHomeSdk
-import dk.wejeo.wejeo_smart.TuyaLogic.TuyaDeviceHandler
-import dk.wejeo.wejeo_smart.TuyaLogic.TuyaHomeHandler
-import dk.wejeo.wejeo_smart.TuyaLogic.TuyaUserHandler
+import dk.wejeo.wejeo_smart.TuyaLogic.*
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
+    val LOG_TAG = "MainActivityChannel"
     //    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
 //        super.onCreate(savedInstanceState, persistentState)
 //        TuyaHomeSdk.init(this.application)
@@ -28,14 +28,17 @@ class MainActivity : FlutterActivity() {
 
     private val tuyaChannelName = "dk.wejeo.wejeoSmart/tuya"
     private val homeEventChannelName = "dk.wejeo.wejeoSmart/homeEvents"
-//    private val deviceEventChannelName = "dk.wejeo.wejeoSmart/deviceEvents"
+    private val deviceEventChannelName = "dk.wejeo.wejeoSmart/deviceEvents"
 //    private val timerEventChannelName = "dk.wejeo.wejeoSmart/timerEvents"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, homeEventChannelName)
-            .setStreamHandler(NetworkStreamHandler(this))
+            .setStreamHandler(TuyaHomeExtensions())
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, deviceEventChannelName)
+            .setStreamHandler(TuyaDeviceExtensions())
 
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
@@ -188,11 +191,18 @@ class MainActivity : FlutterActivity() {
                 //Device functions
                 "startParing" -> {
                     try {
-                        val homeId = call.argument<Long>("homeId")
+//                        val homeId = call.argument<Long>("homeId")
+                        //TODO convert from int to long??
                         val password = call.argument<String>("password")
                         val ssid = call.argument<String>("ssid")
                         val mode = call.argument<Int>("mode")
-                        tuyaDeviceHandler.startParing(result, homeId!!, password!!, ssid!!, mode!!)
+
+//                        Log.i(LOG_TAG, "HomeID: $homeId")
+                        Log.i(LOG_TAG, "password: $password")
+                        Log.i(LOG_TAG, "ssid: $ssid")
+                        Log.i(LOG_TAG, "mode: $mode")
+
+//                        tuyaDeviceHandler.startParing(result, homeId!!, password!!, ssid!!, mode!!)
 
                     } catch (e: Exception) {
                         result.error("errorSetDebug", "data or format error", "")
