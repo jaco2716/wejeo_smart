@@ -22,7 +22,7 @@ Map<String, dynamic> toJson() => _$NAMEToJson(this);
 
 
 ### Build iOS/Android Archive: 
-Remember to change version!
+Remember to change version! (version: 1.0.0+1 -> 1.0.1+2)
 * flutter build ipa
 * flutter build appbundle
 

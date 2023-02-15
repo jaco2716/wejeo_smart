@@ -49,9 +49,7 @@ class _HomeOverviewState extends State<HomeOverview> {
           child: StreamBuilder<List<TuyaDevice>>(
               stream: devicesStream,
               builder: (context, snapshot) {
-                print(" #Home device Update ");
                 var deviceList = snapshot.data ?? [];
-                print(deviceList.toString());
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (deviceList.isEmpty) {

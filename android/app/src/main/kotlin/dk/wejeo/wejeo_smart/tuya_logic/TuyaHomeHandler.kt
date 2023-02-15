@@ -13,7 +13,9 @@ import org.json.JSONArray
 
 open class TuyaHomeHandler {
 
-     var eventSink: EventChannel.EventSink? = null
+    companion object {
+        var eventSink: EventChannel.EventSink? = null
+    }
 //    static let sharedInstance = TuyaHomeHandler()
 
 //    val homeManager: TuyaSmartHomeManager

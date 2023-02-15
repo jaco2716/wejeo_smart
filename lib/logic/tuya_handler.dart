@@ -103,7 +103,6 @@ class TuyaHandler extends ChangeNotifier {
       await Permission.location.request();
       // print(status);
       String? ssid = await networkInfo.getWifiName();
-      String? pass = ssidPass[ssid];
       if (Platform.isAndroid && ssid != null) {
         if (ssid.length > 1) {
           if (ssid[0] == '"' && ssid[ssid.length - 1] == '"') {
@@ -111,6 +110,7 @@ class TuyaHandler extends ChangeNotifier {
           }
         }
       }
+      String? pass = ssidPass[ssid];
 
       return [ssid, pass];
     } catch (e) {

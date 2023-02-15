@@ -17,9 +17,11 @@ import org.json.JSONObject
 
 
 open class TuyaDeviceHandler {
-
     val LOG_TAG = "DeviceConfig_#JW"
-    var eventSink: EventChannel.EventSink? = null
+
+    companion object {
+        var eventSink: EventChannel.EventSink? = null
+    }
 
     lateinit var mTuyaActivator: ITuyaActivator
 //    static let sharedInstance = TuyaDeviceHandler()

@@ -20,12 +20,10 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
     return '${date.day} ${months[currentMon - 1]}';
   }
 
-  void _deleteAccount() {
-    final authAppState = AuthAppState();
-
+  void _deleteAccount() async {
     Navigator.pop(context);
     showMyLoadingDialog(context);
-    authAppState.cancelAccount(() {
+    await context.read<AuthAppState>().cancelAccount(() {
       if (mounted) {
         Navigator.popUntil(context, (route) => route.isFirst);
       }
@@ -38,18 +36,17 @@ class _ManageAccountPageState extends State<ManageAccountPage> {
   }
 
   Future<void> _logout() async {
-    showMyDialog(context, 'Signing out?', message: 'Do you want to sign out?', confirmText: 'Sign out', infoDialog: false, myOnPressed: () async {
-      showMyLoadingDialog(context);
-      await context.read<AuthAppState>().logOutUser(() {
-        if (mounted) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        }
-      }, (message) {
-        if (mounted) {
-          Navigator.popUntil(context, (route) => route.isFirst);
-          showMyDialog(context, 'Error', message: message);
-        }
-      });
+    Navigator.pop(context);
+    showMyLoadingDialog(context);
+    await context.read<AuthAppState>().logOutUser(() {
+      if (mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+      }
+    }, (message) {
+      if (mounted) {
+        Navigator.popUntil(context, (route) => route.isFirst);
+        showMyDialog(context, 'Error', message: message);
+      }
     });
   }
 

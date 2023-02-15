@@ -21,9 +21,11 @@ import kotlin.concurrent.schedule
 
 
 open class TuyaTimerHandler {
-
     val LOG_TAG = "TimerConfig_#JW"
-    var eventSink: EventChannel.EventSink? = null
+
+    companion object {
+        var eventSink: EventChannel.EventSink? = null
+    }
 
 //    static let sharedInstance = TuyaTimerHandler()
 //    let tuyaSmartTimer: TuyaSmartTimer = TuyaSmartTimer()
@@ -44,10 +46,10 @@ open class TuyaTimerHandler {
                 TimerDeviceTypeEnum.DEVICE,
                 object : ITuyaDataCallback<MutableList<TimerTask>> {
                     override fun onSuccess(result: MutableList<TimerTask>?) {
-                        if(result == null){
+                        if (result == null) {
                             completion("[]")
                             return
-                        }else if(result.isEmpty()){
+                        } else if (result.isEmpty()) {
                             completion("[]")
                             return
                         }
@@ -61,7 +63,7 @@ open class TuyaTimerHandler {
                                 val status = time.status == 1
                                 val jsonObj = JSONObject(time.value)
 
-                                val dpsStatus= jsonObj.toMap() as Map<String, Boolean>
+                                val dpsStatus = jsonObj.toMap() as Map<String, Boolean>
                                 val data: Map<String, Any?> =
                                     mapOf(
                                         "timerId" to time.timerId,
@@ -100,7 +102,7 @@ open class TuyaTimerHandler {
     ) {
 
         val dps: Map<String, Any> = mapOf("1" to dpsStatus)
-        val actions : Map<String, Any> = mapOf("dps" to dps, "time" to time)
+        val actions: Map<String, Any> = mapOf("dps" to dps, "time" to time)
 
         Log.i(LOG_TAG, "dps: ${JSONObject(actions)}")
 
@@ -126,7 +128,6 @@ open class TuyaTimerHandler {
                             "Error when getting timers"
                         )
                     } else {
-                        Log.i(LOG_TAG, "RESULT success... $result")
                         eventSink?.success(result)
                     }
                 }

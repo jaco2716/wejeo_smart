@@ -19,6 +19,7 @@ class TuyaHomeProvider extends ChangeNotifier {
     if (homeList != null) {
       if (homeList!.isEmpty) {
         await _tuyaHandler.addHome('My Home new', '', '', 0, 0, (homeId) {}, (message) {});
+        await Future.delayed(const Duration(milliseconds: 200));
         homeList = await _tuyaHandler.getHomeList();
       }
     } else {
