@@ -1,12 +1,10 @@
-package dk.wejeo.wejeo_smart.TuyaLogic
-
+package dk.wejeo.wejeo_smart.tuya_logic
 import android.util.Log
 import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.api.ITuyaHomeChangeListener
+import com.tuya.smart.home.sdk.api.ITuyaHome
+import com.tuya.smart.home.sdk.api.ITuyaHomeDeviceStatusListener
 import com.tuya.smart.home.sdk.bean.HomeBean
 import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
-import com.tuya.smart.sdk.bean.GroupBean
 import dk.wejeo.wejeo_smart.LocalDataHandler
 import io.flutter.plugin.common.EventChannel
 import org.json.JSONArray
@@ -14,10 +12,23 @@ import org.json.JSONObject
 
 
 class TuyaHomeExtensions : EventChannel.StreamHandler, TuyaHomeHandler() {
-    val LOG_TAG = "TuyaHomeEventStream"
+    val LOG_TAG = "HomeEvent_#JW"
+    private lateinit var mHome: ITuyaHome
+
+    private val listener = object : ITuyaHomeDeviceStatusListener {
+        override fun onDeviceInfoUpdate(devId: String?) {
+            Log.i(LOG_TAG, "onDeviceInfoUpdate")
+        }
+        override fun onDeviceStatusChanged(devId: String?, online: Boolean) {
+            Log.i(LOG_TAG, "onDeviceStatusChanged")
+        }
+        override fun onDeviceDpUpdate(devId: String?, dpStr: String?) {
+            Log.i(LOG_TAG, "onDeviceDpUpdate")
+        }
+    }
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-        Log.i(LOG_TAG,"Home Stream started")
+        Log.i(LOG_TAG, "Home Stream started")
         this.eventSink = events
         val currentHomeId = LocalDataHandler.currentHomeId
         if (currentHomeId == null) {
@@ -25,64 +36,37 @@ class TuyaHomeExtensions : EventChannel.StreamHandler, TuyaHomeHandler() {
             return
         }
         updateHomeData(currentHomeId)
-        startHomeListener()
+//        startHomeListener(currentHomeId)
     }
 
     override fun onCancel(arguments: Any?) {
         this.eventSink = null
+        if (this::mHome.isInitialized) {
+//            mHome.unRegisterHomeDeviceStatusListener(listener)
+            Log.i(LOG_TAG, "unRegister home device Listener")
+
+        }
         Log.i(LOG_TAG, "Home Stream Canceled")
 
     }
 
-
-    private fun startHomeListener() {
-
-        val listener: ITuyaHomeChangeListener = object : ITuyaHomeChangeListener {
-            override fun onHomeInvite(homeId: Long, homeName: String) {
-                // do something
-            }
-
-            override fun onHomeRemoved(homeId: Long) {
-                // do something
-            }
-
-            override fun onHomeInfoChanged(homeId: Long) {
-                Log.i(LOG_TAG, "onHomeInfoChanged")
-                updateHomeData(homeId)
-            }
-
-            override fun onSharedDeviceList(sharedDeviceList: List<DeviceBean?>?) {
-                // do something
-                Log.i(LOG_TAG, "onSharedDeviceList")
-            }
-
-            override fun onSharedGroupList(sharedGroupList: List<GroupBean>) {
-                // do something
-                Log.i(LOG_TAG, "onSharedGroupList")
-            }
-
-            override fun onServerConnectSuccess() {
-                // do something
-                Log.i(LOG_TAG, "onServerConnectSuccess")
-            }
-
-            override fun onHomeAdded(homeId: Long) {
-                // do something
-                Log.i(LOG_TAG, "onHomeAdded")
-            }
-        }
+    private fun startHomeListener(homeId: Long) {
         // Registers a listener.
-        TuyaHomeSdk.getHomeManagerInstance().registerTuyaHomeChangeListener(listener)
+        mHome = TuyaHomeSdk.newHomeInstance(homeId)
+        mHome.registerHomeDeviceStatusListener(listener)
+
     }
 
 
-    private fun updateHomeData(homeId:Long){
+
+
+    private fun updateHomeData(homeId: Long) {
         val home = TuyaHomeSdk.newHomeInstance(homeId)
 
         home.getHomeDetail(object : ITuyaHomeResultCallback {
             override fun onSuccess(bean: HomeBean?) {
                 val deviceList = bean?.deviceList
-                var devicesListMap = mutableListOf<Map<String, Any?>>()
+                val devicesListMap = mutableListOf<Map<String, Any?>>()
                 if (deviceList != null) {
                     for (device in deviceList) {
 
@@ -106,7 +90,7 @@ class TuyaHomeExtensions : EventChannel.StreamHandler, TuyaHomeHandler() {
             }
 
             override fun onError(code: String?, error: String?) {
-                eventSink?.error(code, error,"Error getting home details")
+                eventSink?.error(code, error, "Error getting home details")
 
             }
         })

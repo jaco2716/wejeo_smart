@@ -1,16 +1,17 @@
-package dk.wejeo.wejeo_smart.TuyaLogic
+package dk.wejeo.wejeo_smart.tuya_logic
 
 import android.util.Log
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IDevListener
+import com.tuya.smart.sdk.api.ITuyaDevice
 import dk.wejeo.wejeo_smart.LocalDataHandler
 import io.flutter.plugin.common.EventChannel
 import org.json.JSONObject
 
 
 class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
-    val EVENT_LOG_TAG = "TuyaHomeEventStream"
-
+    val EVENT_LOG_TAG = "DeviceEvent_#JW"
+    lateinit var mDevice:ITuyaDevice
     override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
 
         print("Device Stream started")
@@ -28,24 +29,32 @@ class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
 
     override fun onCancel(arguments: Any?) {
         this.eventSink = null
+        if (this::mDevice.isInitialized) {
+            mDevice.unRegisterDevListener()
+            Log.i(LOG_TAG, "unRegister device Listener")
+        }
         Log.i(EVENT_LOG_TAG, "Device Stream Canceled")
     }
 
     private fun startDeviceListener(deviceId: String) {
-        val mDevice = TuyaHomeSdk.newDeviceInstance(deviceId)
+        mDevice = TuyaHomeSdk.newDeviceInstance(deviceId)
         mDevice.registerDevListener(object : IDevListener {
             override fun onDpUpdate(devId: String, dpStr: String) {
                 Log.i(EVENT_LOG_TAG, "onDpUpdate")
             }
+
             override fun onRemoved(devId: String) {
                 Log.i(EVENT_LOG_TAG, "onRemoved")
             }
+
             override fun onStatusChanged(devId: String, online: Boolean) {
                 Log.i(EVENT_LOG_TAG, "onStatusChanged")
             }
+
             override fun onNetworkStatusChanged(devId: String, status: Boolean) {
                 Log.i(EVENT_LOG_TAG, "onNetworkStatusChanged")
             }
+
             override fun onDevInfoUpdate(devId: String) {
                 Log.i(EVENT_LOG_TAG, "onDevInfoUpdate")
             }

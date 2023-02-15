@@ -32,8 +32,11 @@ Restore backup
 * gcloud firestore import gs://ab_one_firestore_backup/[EXPORT FOLDER NAME]
 
 ---
-## Useful To remember
-### Screen Orientaion (Portrait olnly)
+## Useful config setup
+
+<details>
+<summary>Screen Orientaion (Portrait olnly)</summary>
+
 Input in main.dart -> MyApp -> after `Widget build(BuildContext context) {`
 ```dart
 SystemChrome.setPreferredOrientations([
@@ -47,9 +50,11 @@ For iOS (To work on iPad)
   <string>UIInterfaceOrientationPortrait</string>
 </array>
 ```
+</details>
 
----
-### IOS Setup for Bluetooth, Location and Wifi info
+<details>
+<summary>IOS Setup for Bluetooth, Location and Wifi info</summary>
+
 In Targets->Runner -> Signing & Capabilities -> +Capability -> Access Wifi information
 
 In info.plist set: 
@@ -82,9 +87,21 @@ Paste in info.plist for location and bluetooth (Location needed for WIFI info an
 <key>NSLocalNetworkUsageDescription</key>
 <string>Local Network is required for some features</string>
 ```
+</details>
+
+
+<details>
+<summary>Android Setup for Bluetooth, Location and Wifi info</summary>
+
+* Find `minSdkVersion`=16, `compileSdkVersion`=33, `targetSdkVersion`=33 -> /FlutterSDK/flutter/packages/flutter_tools/gradle/flutter.gradle
+* See guide for `permission_handler` [Here](https://pub.dev/packages/permission_handler)
+
+</details>
 ---
+
 ## TUYA SDK SETUP
-### IOS
+<details>
+<summary>IOS</summary>
 
 * Update CocoaPods to the latest version. 
 [sudo] gem install cocoapods
@@ -149,9 +166,11 @@ Create AppKey.swift file and pase code(Change values to your key and secret):
         static let secretKey = "YOUR_APP_SECRET"
     }
 ```
----
+</details>
 
-### Android
+<details>
+<summary>Android</summary>
+
 * Get SHA256 key:
 1. Navigate to the Gradle tab at the right side of Android Studio.
 2. Click The elephant "Execute Gradle Task".
@@ -271,3 +290,4 @@ android:name=".MainActivity"
     TuyaHomeSdk.onDestroy()      
 }                                
 ```
+</details>

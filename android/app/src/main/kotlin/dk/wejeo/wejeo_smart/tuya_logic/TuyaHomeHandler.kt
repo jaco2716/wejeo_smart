@@ -1,4 +1,4 @@
-package dk.wejeo.wejeo_smart.TuyaLogic
+package dk.wejeo.wejeo_smart.tuya_logic
 
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.HomeBean
@@ -9,7 +9,6 @@ import dk.wejeo.wejeo_smart.LocalDataHandler
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
-import org.json.JSONObject
 
 
 open class TuyaHomeHandler {

@@ -23,4 +23,9 @@ class TuyaSmartTimer {
   factory TuyaSmartTimer.fromJson(Map<String, dynamic> json) => _$TuyaSmartTimerFromJson(json);
 
   Map<String, dynamic> toJson() => _$TuyaSmartTimerToJson(this);
+
+  @override
+  String toString() {
+    return "timerId: $timerId, aliasName: $aliasName, dpsStatus: $dpsStatus, loops: $loops, status: $status, time: $time";
+  }
 }

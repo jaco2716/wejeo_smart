@@ -36,4 +36,9 @@ class TuyaDevice {
   factory TuyaDevice.fromJson(Map<String, dynamic> json) => _$TuyaDeviceFromJson(json);
 
   Map<String, dynamic> toJson() => _$TuyaDeviceToJson(this);
+
+  @override
+  String toString() {
+    return "ID: $devId, Name: $name, IsOnline: $isOnline, dps: $dps";
+  }
 }

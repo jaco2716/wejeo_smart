@@ -35,150 +35,154 @@ class _AddDevicePageState extends State<AddDevicePage> {
     return Scaffold(
       // backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-          // title: const Text('Add Device'),
-          ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView(
-                onPageChanged: (int page) {
-                  setState(() {
-                    selectedIndex = page;
-                  });
-                },
-                controller: controller,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  ConnectWithWifi(controller: controller, formKey: _formKey),
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(40.0),
+      appBar: AppBar(),
+      body: WillPopScope(
+        onWillPop: () async {
+          await _tuyaHandler.stopParing();
+          return true;
+        },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  onPageChanged: (int page) {
+                    setState(() {
+                      selectedIndex = page;
+                    });
+                  },
+                  controller: controller,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    ConnectWithWifi(controller: controller, formKey: _formKey),
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(40.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Reset the device', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                            const Text('Hold the reset button for 5 secounds', style: TextStyle(fontSize: 12, color: Colors.white70)),
+                            const SizedBox(height: 20),
+                            Material(
+                              borderRadius: BorderRadius.circular(20),
+                              clipBehavior: Clip.hardEdge,
+                              child: Image.asset(
+                                'assets/images/smartplug_reset.png',
+                                width: 250,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Reset the device', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                          const Text('Hold the reset button for 5 secounds', style: TextStyle(fontSize: 12, color: Colors.white70)),
-                          const SizedBox(height: 20),
-                          Material(
-                            borderRadius: BorderRadius.circular(20),
-                            clipBehavior: Clip.hardEdge,
-                            child: Image.asset(
-                              'assets/images/smartplug_reset.png',
-                              width: 250,
-                            ),
-                          ),
+                        children: const [
+                          Text('Confirm Reset', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                          Text('Make sure the reset indicator is blinking fast.', style: TextStyle(fontSize: 12, color: Colors.white70)),
+                          SizedBox(height: 0),
+                          BlinkingPowerIcon(durationMili: 290, title: 'Blinking Fast'),
+                          // BlinkingPowerIcon(durationMili: 1500, title: 'Blinking Slow'),
                         ],
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Column(
+                    Center(
+                        child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: const [
-                        Text('Confirm Reset', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                        Text('Make sure the reset indicator is blinking fast.', style: TextStyle(fontSize: 12, color: Colors.white70)),
-                        SizedBox(height: 0),
-                        BlinkingPowerIcon(durationMili: 290, title: 'Blinking Fast'),
-                        // BlinkingPowerIcon(durationMili: 1500, title: 'Blinking Slow'),
+                        Text('Connecting', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 20),
+                        MyCountDown(count: 100),
                       ],
-                    ),
-                  ),
-                  Center(
-                      child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text('Connecting', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 20),
-                      MyCountDown(count: 100),
-                    ],
-                  )),
-                ],
-              ),
-            ),
-            SafeArea(
-              top: false,
-              child: SizedBox(
-                height: 80,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _buildPageIndicator(),
-                    ),
-                    // TextButton(onPressed: () {}, child: Text('Back')),
-                    const SizedBox(width: 70),
-                    Row(
-                      children: [
-                        selectedIndex == 0
-                            ? const SizedBox.shrink()
-                            : Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: OutlinedButton(
-                                      // style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
-                                      onPressed: () {
-                                        if (selectedIndex == 3) {
-                                          _tuyaHandler.stopParing();
-                                        }
-                                        FocusScope.of(context).requestFocus(FocusNode());
-                                        controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                                      },
-                                      child: Text(selectedIndex == 3 ? 'Cancel' : 'Back')),
-                                ),
-                              ),
-                        selectedIndex == 3
-                            ? const SizedBox.shrink()
-                            : Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        if (selectedIndex == 0) {
-                                          _formKey.currentState!.save();
-                                          if (!_formKey.currentState!.validate()) {
-                                            return;
-                                          }
-
-                                          SharedPreferences.getInstance().then((prefs) {
-                                            Map<String, dynamic> ssidPass = {
-                                              _wifiData.ssid!: _wifiData.password,
-                                            };
-                                            prefs.setString('ssidPass', jsonEncode(ssidPass));
-                                          });
-                                        } else if (selectedIndex == 2) {
-                                          _tuyaHandler.startParing(_wifiData.ssid!, _wifiData.password!, (deviceId) async {
-                                            if (mounted) {
-                                              showMyDialog(context, 'Success', message: "Successfully connected to device").then((value) {
-                                                if (mounted) {
-                                                  Navigator.pop(context);
-                                                  setState(() {});
-                                                }
-                                              });
-                                            }
-                                          }, (message) {
-                                            if (mounted) {
-                                              Navigator.pop(context);
-                                              showMyDialog(context, 'Error', message: message);
-                                            }
-                                          });
-                                        }
-                                        FocusScope.of(context).requestFocus(FocusNode());
-                                        controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                                      },
-                                      child: const Text('Next')),
-                                ),
-                              ),
-                      ],
-                    ),
+                    )),
                   ],
                 ),
               ),
-            ),
-          ],
+              SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: _buildPageIndicator(),
+                      ),
+                      // TextButton(onPressed: () {}, child: Text('Back')),
+                      const SizedBox(width: 70),
+                      Row(
+                        children: [
+                          selectedIndex == 0
+                              ? const SizedBox.shrink()
+                              : Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: OutlinedButton(
+                                        // style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
+                                        onPressed: () {
+                                          if (selectedIndex == 3) {
+                                            _tuyaHandler.stopParing();
+                                          }
+                                          FocusScope.of(context).requestFocus(FocusNode());
+                                          controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                        },
+                                        child: Text(selectedIndex == 3 ? 'Cancel' : 'Back')),
+                                  ),
+                                ),
+                          selectedIndex == 3
+                              ? const SizedBox.shrink()
+                              : Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ElevatedButton(
+                                        onPressed: () {
+                                          if (selectedIndex == 0) {
+                                            _formKey.currentState!.save();
+                                            if (!_formKey.currentState!.validate()) {
+                                              return;
+                                            }
+
+                                            SharedPreferences.getInstance().then((prefs) {
+                                              Map<String, dynamic> ssidPass = {
+                                                _wifiData.ssid!: _wifiData.password,
+                                              };
+                                              prefs.setString('ssidPass', jsonEncode(ssidPass));
+                                            });
+                                          } else if (selectedIndex == 2) {
+                                            _tuyaHandler.startParing(_wifiData.ssid!, _wifiData.password!, (deviceId) async {
+                                              if (mounted) {
+                                                showMyDialog(context, 'Success', message: "Successfully connected to device").then((value) {
+                                                  if (mounted) {
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  }
+                                                });
+                                              }
+                                            }, (message) {
+                                              if (mounted) {
+                                                Navigator.pop(context);
+                                                showMyDialog(context, 'Error', message: message);
+                                              }
+                                            });
+                                          }
+                                          FocusScope.of(context).requestFocus(FocusNode());
+                                          controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                        },
+                                        child: const Text('Next')),
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

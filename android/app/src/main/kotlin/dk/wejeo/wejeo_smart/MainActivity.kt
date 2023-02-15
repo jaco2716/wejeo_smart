@@ -1,16 +1,16 @@
 package dk.wejeo.wejeo_smart
 
-import android.util.Log
 import androidx.annotation.NonNull
 import com.tuya.smart.home.sdk.TuyaHomeSdk
-import dk.wejeo.wejeo_smart.TuyaLogic.*
+import dk.wejeo.wejeo_smart.TuyaLogic.TuyaTimerHandler
+import dk.wejeo.wejeo_smart.tuya_logic.*
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    val LOG_TAG = "MainActivityChannel"
+    private val LOG_TAG = "MethodChannel_#JW"
     //    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
 //        super.onCreate(savedInstanceState, persistentState)
 //        TuyaHomeSdk.init(this.application)
@@ -25,11 +25,12 @@ class MainActivity : FlutterActivity() {
     private val tuyaUserHandler = TuyaUserHandler()
     private val tuyaHomeHandler = TuyaHomeHandler()
     private val tuyaDeviceHandler = TuyaDeviceHandler()
+    private val tuyaTimerHandler = TuyaTimerHandler()
 
     private val tuyaChannelName = "dk.wejeo.wejeoSmart/tuya"
     private val homeEventChannelName = "dk.wejeo.wejeoSmart/homeEvents"
     private val deviceEventChannelName = "dk.wejeo.wejeoSmart/deviceEvents"
-//    private val timerEventChannelName = "dk.wejeo.wejeoSmart/timerEvents"
+    private val timerEventChannelName = "dk.wejeo.wejeoSmart/timerEvents"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -39,6 +40,9 @@ class MainActivity : FlutterActivity() {
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, deviceEventChannelName)
             .setStreamHandler(TuyaDeviceExtensions())
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, timerEventChannelName)
+            .setStreamHandler(TuyaTimerExtensions())
 
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
@@ -191,18 +195,13 @@ class MainActivity : FlutterActivity() {
                 //Device functions
                 "startParing" -> {
                     try {
-//                        val homeId = call.argument<Long>("homeId")
-                        //TODO convert from int to long??
+                        val homeId = call.argument<Int>("homeId")
+                        val homeIdLong = homeId?.toLong() ?: call.argument<Long>("homeId")
                         val password = call.argument<String>("password")
                         val ssid = call.argument<String>("ssid")
                         val mode = call.argument<Int>("mode")
 
-//                        Log.i(LOG_TAG, "HomeID: $homeId")
-                        Log.i(LOG_TAG, "password: $password")
-                        Log.i(LOG_TAG, "ssid: $ssid")
-                        Log.i(LOG_TAG, "mode: $mode")
-
-//                        tuyaDeviceHandler.startParing(result, homeId!!, password!!, ssid!!, mode!!)
+                        tuyaDeviceHandler.startParing(result, homeIdLong!!, password!!, ssid!!, mode!!)
 
                     } catch (e: Exception) {
                         result.error("errorSetDebug", "data or format error", "")
@@ -210,7 +209,7 @@ class MainActivity : FlutterActivity() {
 
                 }
                 "stopParing" -> {
-                    tuyaDeviceHandler.stopParing()
+                    tuyaDeviceHandler.stopParing(result)
 
                 }
 //                "getCurrentHomeDeviceList" -> {
@@ -300,38 +299,38 @@ class MainActivity : FlutterActivity() {
 
                 //-------------------------------------------------------------------------------
                 //Timer functions
-//                "addDeviceTimer" -> {
-//                    try {
-//                        val deviceId = call.argument<String>("deviceId")
-//                        val time = call.argument<String>("time")
-//                        val loops = call.argument<String>("loops")
-//                        val dpsStatus = call.argument<Boolean>("dpsStatus")
-//                        tuyaTimerHandler.addDeviceTimer(result, deviceId, time, loops, dpsStatus)
-//                    } catch (e: Exception) {
-//                        result.error("errorSetDebug", "data or format error", "")
-//                    }
-//
-//
-//                }
-//                //        else if (call.method == "getDeviceTimers"){
-//                //            if  let deviceId = call.arguments as? String {
-//                //                tuyaTimerHandler.getDeviceTimers(result: result, deviceId: deviceId)
-//                //            } else {
-//                //                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
-//                //            }
-//                //
-//                //        }
-//                "updateTimerStatus" -> {
-//                    try {
-//                        val deviceId = call.argument<String>("deviceId")
-//                        val timerIds = call.argument<List<String>>("timerIds")
-//                        val updateType = call.argument<Int>("updateType")
-//                        tuyaTimerHandler.updateTimerStatus(result, deviceId, timerIds, updateType)
-//                    } catch (e: Exception) {
-//                        result.error("errorSetDebug", "data or format error", "")
-//                    }
-//
-//                }
+                "addDeviceTimer" -> {
+                    try {
+                        val deviceId = call.argument<String>("deviceId")
+                        val time = call.argument<String>("time")
+                        val loops = call.argument<String>("loops")
+                        val dpsStatus = call.argument<Boolean>("dpsStatus")
+                        tuyaTimerHandler.addDeviceTimer(result, deviceId!!, time!!, loops!!, dpsStatus!!)
+                    } catch (e: Exception) {
+                        result.error("errorSetDebug", "data or format error", "")
+                    }
+
+
+                }
+                //        else if (call.method == "getDeviceTimers"){
+                //            if  let deviceId = call.arguments as? String {
+                //                tuyaTimerHandler.getDeviceTimers(result: result, deviceId: deviceId)
+                //            } else {
+                //                result(FlutterError.init(code: "errorSetDebug", message: "data or format error", details: nil))
+                //            }
+                //
+                //        }
+                "updateTimerStatus" -> {
+                    try {
+                        val deviceId = call.argument<String>("deviceId")
+                        val timerIds = call.argument<List<String>>("timerIds")
+                        val updateType = call.argument<Int>("updateType")
+                        tuyaTimerHandler.updateTimerStatus(result, deviceId!!, timerIds!!, updateType!!)
+                    } catch (e: Exception) {
+                        result.error("errorSetDebug", "data or format error", "")
+                    }
+
+                }
                 else -> {
                     result.notImplemented()
                 }

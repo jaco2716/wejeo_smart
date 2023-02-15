@@ -1,7 +1,6 @@
-package dk.wejeo.wejeo_smart.TuyaLogic
+package dk.wejeo.wejeo_smart.tuya_logic
 
 import android.util.Log
-import com.tuya.smart.android.device.api.IPropertyCallback
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.builder.ActivatorBuilder
 import com.tuya.smart.sdk.api.IResultCallback
@@ -14,11 +13,12 @@ import dk.wejeo.wejeo_smart.LocalDataHandler
 import dk.wejeo.wejeo_smart.WejeoSmart.Companion.context
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import org.json.JSONObject
 
 
 open class TuyaDeviceHandler {
 
-    val LOG_TAG = "TuyaDeviceConfigEZ"
+    val LOG_TAG = "DeviceConfig_#JW"
     var eventSink: EventChannel.EventSink? = null
 
     lateinit var mTuyaActivator: ITuyaActivator
@@ -54,7 +54,7 @@ open class TuyaDeviceHandler {
 
 //        connectingWifiSsid = ssid
 
-        Log.i(LOG_TAG,"Started Paring device: homeId: $homeId, password: $password, ssid: $ssid")
+        Log.i(LOG_TAG, "Started Paring device: homeId: $homeId, password: $password, ssid: $ssid")
         getToken(result, homeId, ssid, password, mode)
     }
 
@@ -68,7 +68,7 @@ open class TuyaDeviceHandler {
         TuyaHomeSdk.getActivatorInstance().getActivatorToken(homeId,
             object : ITuyaActivatorGetToken {
                 override fun onSuccess(token: String) {
-
+                    startConfigWiFi(result, ssid, password, token, mode)
                 }
 
                 override fun onFailure(code: String?, error: String?) {
@@ -85,14 +85,19 @@ open class TuyaDeviceHandler {
         token: String,
         mode: Int
     ) {
-        //TODO impliment mode
+        val activatorMode = if (mode == 0) {
+            ActivatorModelEnum.TY_EZ
+        } else {
+            ActivatorModelEnum.TY_AP
+        }
 
+        Log.i(LOG_TAG, "Setting ActivatorBuilder")
 // Starts pairing.
         val builder = ActivatorBuilder()
             .setSsid(ssid)
             .setContext(context)
             .setPassword(password)
-            .setActivatorModel(ActivatorModelEnum.TY_EZ)
+            .setActivatorModel(activatorMode)
             .setTimeOut(100)
             .setToken(token)
             .setListener(object : ITuyaSmartActivatorListener {
@@ -122,9 +127,10 @@ open class TuyaDeviceHandler {
                 }
             }
             )
-
+        Log.i(LOG_TAG, "Initializing mTuyaActivator")
         mTuyaActivator = TuyaHomeSdk.getActivatorInstance().newMultiActivator(builder)
 
+        Log.i(LOG_TAG, "Starting mTuyaActivator")
         //Start configuration
         mTuyaActivator.start()
 
@@ -134,9 +140,14 @@ open class TuyaDeviceHandler {
     }
 
 
-    fun stopParing() {
-        Log.i(LOG_TAG,"Stopping config")
-        mTuyaActivator.stop()
+    fun stopParing(result: MethodChannel.Result) {
+        Log.i(LOG_TAG, "Stopping config")
+        if (this::mTuyaActivator.isInitialized) {
+            mTuyaActivator.stop()
+        } else {
+            Log.i(LOG_TAG, "mTuyaActivator Not initialized")
+        }
+        result.success(null)
     }
 
 
@@ -226,16 +237,15 @@ open class TuyaDeviceHandler {
     ///
     ///Set device Name
     ///
-    fun modifyDeviceName(result: MethodChannel.Result,deviceId: String, name: String)
-    {
+    fun modifyDeviceName(result: MethodChannel.Result, deviceId: String, name: String) {
         val deviceFromId = TuyaHomeSdk.newDeviceInstance(deviceId)
         deviceFromId.renameDevice(name, object : IResultCallback {
             override fun onError(code: String?, error: String?) {
                 result.error(code.toString(), error, "Failed to rename device")
             }
 
-           override fun onSuccess() {
-               result.success("Success")
+            override fun onSuccess() {
+                result.success("Success")
             }
         })
 
@@ -249,13 +259,14 @@ open class TuyaDeviceHandler {
         val deviceFromId = TuyaHomeSdk.newDeviceInstance(deviceId)
         val deviceBean = TuyaHomeSdk.getDataInstance().getDeviceBean(deviceId)
         LocalDataHandler.currentDeviceId = deviceId
+
         //TODO
 //        self.initDevice(deviceId: device. deviceModel . devId)
 
-        if(deviceBean != null){
+        if (deviceBean != null) {
             val dps = deviceBean.dps[dpId] as Boolean? ?: false
-            val newDps = {dpId to !dps}
-            deviceFromId.publishDps(newDps.toString(), object : IResultCallback{
+            val newDps: Map<String, Any> = mapOf(dpId to !dps)
+            deviceFromId.publishDps(JSONObject(newDps).toString(), object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     result.error(code.toString(), error, "Failed to set dps")
                 }
@@ -264,7 +275,10 @@ open class TuyaDeviceHandler {
                     result.success(!dps)
                 }
             })
+        } else {
+            result.error("null", "Device null", "Failed get device from id")
         }
+
     }
 
 //    fun readDeviceValues(result: MethodChannel.Result, deviceId: String) {
@@ -284,18 +298,18 @@ open class TuyaDeviceHandler {
 
     fun removeDevice(result: MethodChannel.Result, deviceId: String) {
         val deviceFromId = TuyaHomeSdk.newDeviceInstance(deviceId)
-deviceFromId.removeDevice(object :IResultCallback{
-    override fun onError(code: String?, error: String?) {
-        result.error(code.toString(), error, "Failed to remove device")
-    }
+        deviceFromId.removeDevice(object : IResultCallback {
+            override fun onError(code: String?, error: String?) {
+                result.error(code.toString(), error, "Failed to remove device")
+            }
 
-    override fun onSuccess() {
-        LocalDataHandler.currentDeviceId = deviceId
-        //TODO
+            override fun onSuccess() {
+                LocalDataHandler.currentDeviceId = deviceId
+                //TODO
 //        self.initDevice(deviceId: device. deviceModel . devId)
-        result.success("Success")
-    }
-})
+                result.success("Success")
+            }
+        })
 
     }
 }

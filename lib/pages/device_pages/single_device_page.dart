@@ -99,9 +99,12 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                                             _tuyaHandler.removeDevice(widget.device.devId, (message) async {
                                               await Future.delayed(const Duration(milliseconds: 500));
                                               if (mounted) {
-                                                Navigator.pop(context);
+                                                Navigator.popUntil(context, (route) => route.isFirst);
                                               }
                                             }, (message) {
+                                              if (mounted) {
+                                                Navigator.pop(context);
+                                              }
                                               showMyDialog(context, '', message: message);
                                             });
                                           },
@@ -195,7 +198,9 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                   child: StreamBuilder<List<TuyaSmartTimer>?>(
                       stream: timerStream,
                       builder: (context, snapshot) {
+                        print("# TImer Update!");
                         var timerList = snapshot.data ?? [];
+                        print("timers: $timerList");
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (timerList.isEmpty) {

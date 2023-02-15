@@ -10,12 +10,12 @@ class WejeoSmart : Application() {
     override fun onCreate() {
         super.onCreate()
         application = this
-        Log.e("TuyaHomeSdk", "########")
-        Log.e("TuyaHomeSdk", "Initializing TUYA SDK")
+        Log.e("WejeoSmart_#JW", "########")
+        Log.e("WejeoSmart_#JW", "Initializing TUYA SDK")
         TuyaHomeSdk.init(this, "c9turmwnftkwm7wmetxd", "85evxdqjgvkc9sucqd7yka7htqnwqe49")
-        Log.e("TuyaHomeSdk", " Setting debug mode true...")
+        Log.e("WejeoSmart_#JW", " Setting debug mode true...")
         TuyaHomeSdk.setDebugMode(true)
-        Log.e("TuyaHomeSdk", "########")
+        Log.e("WejeoSmart_#JW", "########")
 
     }
 
@@ -27,7 +27,7 @@ class WejeoSmart : Application() {
             get() = application!!.applicationContext
     }
 
-    
+
 
     override fun onTerminate() {
         super.onTerminate()

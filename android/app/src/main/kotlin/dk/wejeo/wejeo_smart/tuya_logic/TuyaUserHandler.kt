@@ -1,4 +1,4 @@
-package dk.wejeo.wejeo_smart.TuyaLogic
+package dk.wejeo.wejeo_smart.tuya_logic
 
 import com.tuya.smart.android.user.api.ILoginCallback
 import com.tuya.smart.android.user.api.ILogoutCallback

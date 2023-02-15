@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:network_info_plus/network_info_plus.dart';
@@ -26,6 +27,11 @@ class TuyaHandler extends ChangeNotifier {
       var result = await _methodChannel.invokeMethod<String?>('getHomeList');
 
       List<TuyaHome> resultList = (jsonDecode(result ?? '[]') as List<dynamic>).map((e) => TuyaHome.fromJson(e)).toList();
+
+      for (var home in resultList) {
+        print("home.homeId");
+        print(home.homeId);
+      }
 
       return resultList;
     } on PlatformException catch (e) {
@@ -98,6 +104,13 @@ class TuyaHandler extends ChangeNotifier {
       // print(status);
       String? ssid = await networkInfo.getWifiName();
       String? pass = ssidPass[ssid];
+      if (Platform.isAndroid && ssid != null) {
+        if (ssid.length > 1) {
+          if (ssid[0] == '"' && ssid[ssid.length - 1] == '"') {
+            ssid = ssid.substring(1, ssid.length - 1);
+          }
+        }
+      }
 
       return [ssid, pass];
     } catch (e) {
@@ -132,7 +145,7 @@ class TuyaHandler extends ChangeNotifier {
         'homeId': currentHomeId,
         'password': password, //'JJ20120902','749dfd196',
         'ssid': ssid, //'Schmidt2',
-        'mode': 0,
+        'mode': 0, // 0 = EZ,  1 = AP
       };
       // print(args);
       String result = await _methodChannel.invokeMethod('startParing', args);
@@ -249,6 +262,7 @@ class TuyaHandler extends ChangeNotifier {
         'dpId': dpId,
       };
       var result = await _methodChannel.invokeMethod<bool?>('setDeviceValue', args);
+
       return result;
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -334,10 +348,15 @@ class TuyaHandler extends ChangeNotifier {
   Stream<List<TuyaSmartTimer>>? timersValueStream() {
     try {
       const deviceEventChannel = EventChannel('dk.wejeo.wejeoSmart/timerEvents');
-      final networkStream = deviceEventChannel
-          .receiveBroadcastStream()
-          .distinct()
-          .map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>).map((e) => TuyaSmartTimer.fromJson(e)).toList());
+      final networkStream = deviceEventChannel.receiveBroadcastStream().distinct().map((dynamic event) {
+        print('event:');
+        print('event: $event');
+        return (jsonDecode(event ?? '[]') as List<dynamic>).map((e) {
+          print('e:');
+          print(e);
+          return TuyaSmartTimer.fromJson(e);
+        }).toList();
+      });
       // deviceEventChannel.receiveBroadcastStream().distinct().map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>));
 
       return networkStream;
