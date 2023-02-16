@@ -37,7 +37,7 @@ class _BlinkingPowerIconState extends State<BlinkingPowerIcon> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: 150,
       height: 150,
       // decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(20)),

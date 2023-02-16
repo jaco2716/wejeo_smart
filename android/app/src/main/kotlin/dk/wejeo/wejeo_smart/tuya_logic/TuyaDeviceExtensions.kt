@@ -22,8 +22,10 @@ class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
             eventSink?.error("0", "No device id", "Could not get device id")
             return
         }
-        updateDeviceData(currentDevId)
-        startDeviceListener(currentDevId)
+        currentDevice = TuyaHomeSdk.getDataInstance().getDeviceBean(currentDevId)
+        mDevice = TuyaHomeSdk.newDeviceInstance(currentDevId)
+        updateDeviceData()
+        startDeviceListener()
 
     }
 
@@ -36,12 +38,12 @@ class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
         Log.i(EVENT_LOG_TAG, "Device Stream Canceled")
     }
 
-    private fun startDeviceListener(deviceId: String) {
-        mDevice = TuyaHomeSdk.newDeviceInstance(deviceId)
+    private fun startDeviceListener() {
+
         mDevice.registerDevListener(object : IDevListener {
             override fun onDpUpdate(devId: String, dpStr: String) {
                 Log.i(EVENT_LOG_TAG, "onDpUpdate")
-                updateDeviceData(devId)
+                updateDeviceData()
             }
 
             override fun onRemoved(devId: String) {
@@ -50,7 +52,7 @@ class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
 
             override fun onStatusChanged(devId: String, online: Boolean) {
                 Log.i(EVENT_LOG_TAG, "onStatusChanged")
-                updateDeviceData(devId)
+                updateDeviceData()
             }
 
             override fun onNetworkStatusChanged(devId: String, status: Boolean) {
@@ -59,13 +61,15 @@ class TuyaDeviceExtensions : EventChannel.StreamHandler, TuyaDeviceHandler() {
 
             override fun onDevInfoUpdate(devId: String) {
                 Log.i(EVENT_LOG_TAG, "onDevInfoUpdate")
-                updateDeviceData(devId)
+                currentDevice?.getName()
+                updateDeviceData()
+
             }
         })
     }
 
-    private fun updateDeviceData(deviceId: String) {
-        val device = TuyaHomeSdk.getDataInstance().getDeviceBean(deviceId)
+    private fun updateDeviceData() {
+        val device = currentDevice
         if (device == null) {
             eventSink?.error("0", "Device null", "Could not get device from id")
             return

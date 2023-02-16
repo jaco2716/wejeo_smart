@@ -14,6 +14,8 @@ import dk.wejeo.wejeo_smart.WejeoSmart.Companion.context
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
+import java.util.*
+import kotlin.concurrent.schedule
 
 
 open class TuyaDeviceHandler {
@@ -21,6 +23,7 @@ open class TuyaDeviceHandler {
 
     companion object {
         var eventSink: EventChannel.EventSink? = null
+        var currentDevice: DeviceBean? = null
     }
 
     lateinit var mTuyaActivator: ITuyaActivator
@@ -247,6 +250,7 @@ open class TuyaDeviceHandler {
             }
 
             override fun onSuccess() {
+                currentDevice?.name = name
                 result.success("Success")
             }
         })

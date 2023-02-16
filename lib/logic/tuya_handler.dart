@@ -28,11 +28,6 @@ class TuyaHandler extends ChangeNotifier {
 
       List<TuyaHome> resultList = (jsonDecode(result ?? '[]') as List<dynamic>).map((e) => TuyaHome.fromJson(e)).toList();
 
-      for (var home in resultList) {
-        print("home.homeId");
-        print(home.homeId);
-      }
-
       return resultList;
     } on PlatformException catch (e) {
       if (kDebugMode) {
@@ -88,6 +83,16 @@ class TuyaHandler extends ChangeNotifier {
         print('Error: $e');
       }
       errorCallback('Error: $e');
+    }
+  }
+
+  Future<void> updateHomeData() async {
+    try {
+      await _methodChannel.invokeMethod<String?>('updateHomeData');
+    } on PlatformException catch (e) {
+      if (kDebugMode) {
+        print('Error: $e');
+      }
     }
   }
 
@@ -262,6 +267,7 @@ class TuyaHandler extends ChangeNotifier {
         'dpId': dpId,
       };
       var result = await _methodChannel.invokeMethod<bool?>('setDeviceValue', args);
+      await Future.delayed(const Duration(milliseconds: 100), () => updateHomeData());
 
       return result;
     } on PlatformException catch (e) {
@@ -348,15 +354,10 @@ class TuyaHandler extends ChangeNotifier {
   Stream<List<TuyaSmartTimer>>? timersValueStream() {
     try {
       const deviceEventChannel = EventChannel('dk.wejeo.wejeoSmart/timerEvents');
-      final networkStream = deviceEventChannel.receiveBroadcastStream().distinct().map((dynamic event) {
-        print('event:');
-        print('event: $event');
-        return (jsonDecode(event ?? '[]') as List<dynamic>).map((e) {
-          print('e:');
-          print(e);
-          return TuyaSmartTimer.fromJson(e);
-        }).toList();
-      });
+      final networkStream = deviceEventChannel
+          .receiveBroadcastStream()
+          .distinct()
+          .map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>).map((e) => TuyaSmartTimer.fromJson(e)).toList());
       // deviceEventChannel.receiveBroadcastStream().distinct().map((dynamic event) => (jsonDecode(event ?? '[]') as List<dynamic>));
 
       return networkStream;

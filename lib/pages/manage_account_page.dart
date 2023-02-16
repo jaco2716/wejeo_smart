@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wejeo_smart/logic/auth_app_state.dart';
-import 'package:wejeo_smart/logic/tuya_handler.dart';
 import 'package:wejeo_smart/widgets/my_alert_dialog.dart';
 
 class ManageAccountPage extends StatefulWidget {

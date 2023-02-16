@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:wejeo_smart/pages/manage_account_page.dart';
-
-import '../logic/auth_app_state.dart';
-import 'my_alert_dialog.dart';
 
 class MenuPopupButton extends StatefulWidget {
   const MenuPopupButton({

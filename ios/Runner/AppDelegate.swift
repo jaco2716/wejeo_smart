@@ -153,6 +153,9 @@ import TuyaSmartBaseKit
             
         }else if (call.method == "getCurrentHome"){
             tuyaHomeHandler.getCurrentHome(result: result)
+        }else if (call.method == "updateHomeData"){
+            print("NOT IMPLEMENTED ON IOS")
+            result(nil)
         }
         
         

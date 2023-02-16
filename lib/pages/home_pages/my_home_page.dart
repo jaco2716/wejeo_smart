@@ -38,7 +38,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         );
       } else {
-        return Scaffold(appBar: appBarWithLogout(), body: const Center(child: Text('No data')));
+        return Scaffold(
+            appBar: appBarWithLogout(),
+            body: const Center(child: Text('No connection.\nCheck your internet or restart the app.', textAlign: TextAlign.center)));
       }
     });
   }

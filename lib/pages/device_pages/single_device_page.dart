@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
@@ -162,7 +164,10 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                       children: [
                         Text(deviceStream.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         const SizedBox(width: 20),
-                        Text(deviceStream.isOnline ? 'Online' : 'Offline'),
+                        Text(
+                          deviceStream.isOnline ? 'Online' : 'Offline',
+                          style: TextStyle(color: deviceStream.isOnline ? Colors.green : Colors.orange),
+                        ),
                       ],
                     )
                   ],
@@ -198,9 +203,7 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                   child: StreamBuilder<List<TuyaSmartTimer>?>(
                       stream: timerStream,
                       builder: (context, snapshot) {
-                        print("# TImer Update!");
                         var timerList = snapshot.data ?? [];
-                        print("timers: $timerList");
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
                         } else if (timerList.isEmpty) {
@@ -247,28 +250,34 @@ class _SingleDevicePageState extends State<SingleDevicePage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                     child: SizedBox(
-                      width: double.infinity,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(15),
-                        clipBehavior: Clip.hardEdge,
-                        color: deviceStream.dps['1'] ? Colors.green : Colors.black,
-                        child: InkWell(
-                          onTapDown: (details) => HapticFeedback.heavyImpact(),
-                          onTap: () async {
-                            _tuyaHandler.setDeviceValue(widget.device.devId, '1');
-                            await Future.delayed(const Duration(milliseconds: 70));
-                            HapticFeedback.heavyImpact();
-                          },
-                          child: const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Icon(
-                              Icons.power_settings_new_rounded,
-                              size: 50,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                        width: double.infinity,
+                        child: deviceStream.isOnline
+                            ? Material(
+                                borderRadius: BorderRadius.circular(15),
+                                clipBehavior: Clip.hardEdge,
+                                color: deviceStream.dps['1'] ? Colors.green : Colors.black,
+                                child: InkWell(
+                                  onTap: () async {
+                                    _tuyaHandler.setDeviceValue(widget.device.devId, '1');
+                                    Platform.isIOS ? HapticFeedback.heavyImpact() : HapticFeedback.vibrate();
+                                  },
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(18.0),
+                                    child: Icon(
+                                      Icons.power_settings_new_rounded,
+                                      size: 50,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const Center(
+                                child: Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  "Device is Offline",
+                                  style: TextStyle(color: Colors.orange),
+                                ),
+                              ))),
                   ),
                 ),
                 // const SizedBox(height: 20),

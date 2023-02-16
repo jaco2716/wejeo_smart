@@ -1,6 +1,9 @@
 # WEJEO SMART 
 
 Flutter version 3.3.10
+
+Console Filter : `E/, #JW, flutter, !D/TUYA, Exception`
+
 ## Commands
 ### Build JsonSerializable model classes:
 ```yaml

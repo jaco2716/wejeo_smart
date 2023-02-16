@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wejeo_smart/logic/tuya_handler.dart';
@@ -108,11 +110,9 @@ class SmartDeviceListTile extends StatelessWidget {
               color: device.dps["1"] ? Colors.green : Colors.black,
               borderRadius: BorderRadius.circular(30),
               child: InkWell(
-                onTapDown: (details) => HapticFeedback.heavyImpact(),
                 onTap: () async {
                   _tuyaHandler.setDeviceValue(device.devId, '1');
-                  await Future.delayed(const Duration(milliseconds: 70));
-                  HapticFeedback.heavyImpact();
+                  Platform.isIOS ? HapticFeedback.heavyImpact() : HapticFeedback.vibrate();
                 },
                 child: const Padding(
                   padding: EdgeInsets.all(8.0),

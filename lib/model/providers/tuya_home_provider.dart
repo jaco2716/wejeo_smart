@@ -10,25 +10,31 @@ class TuyaHomeProvider extends ChangeNotifier {
   ConnectionState get connectionState => _connectionState;
 
   TuyaHomeProvider() {
-    getHomeFuture();
+    getHomeFuture(0);
   }
 
-  void getHomeFuture() async {
+  void getHomeFuture(int attempt) async {
     _connectionState = ConnectionState.waiting;
     homeList = await _tuyaHandler.getHomeList();
-    if (homeList != null) {
-      if (homeList!.isEmpty) {
-        await _tuyaHandler.addHome('My Home new', '', '', 0, 0, (homeId) {}, (message) {});
-        await Future.delayed(const Duration(milliseconds: 200));
-        homeList = await _tuyaHandler.getHomeList();
-      }
-    } else {
-      if (kDebugMode) {
-        print('Trying again to getHomeList');
-      }
-      homeList = await _tuyaHandler.getHomeList();
+    if (kDebugMode) {
+      print('Trying to getHomeList attempt: ${attempt + 1}');
     }
-    _connectionState = ConnectionState.done;
-    notifyListeners();
+    if (attempt > 3) {
+      _connectionState = ConnectionState.done;
+      notifyListeners();
+    } else {
+      if (homeList == null) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        getHomeFuture(attempt++);
+      } else if (homeList!.isEmpty) {
+        await Future.delayed(const Duration(milliseconds: 400));
+        await _tuyaHandler.addHome('My Home new', '', '', 0, 0, (homeId) {}, (message) {});
+        await Future.delayed(const Duration(milliseconds: 400));
+        getHomeFuture(attempt++);
+      } else {
+        _connectionState = ConnectionState.done;
+        notifyListeners();
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private val LOG_TAG = "MethodChannel_#JW"
+
     //    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
 //        super.onCreate(savedInstanceState, persistentState)
 //        TuyaHomeSdk.init(this.application)
@@ -189,6 +190,9 @@ class MainActivity : FlutterActivity() {
                 "getCurrentHome" -> {
                     tuyaHomeHandler.getCurrentHome(result)
                 }
+                "updateHomeData" -> {
+                    tuyaHomeHandler.updateHomeData(result)
+                }
 
 
                 //-------------------------------------------------------------------------------
@@ -201,7 +205,13 @@ class MainActivity : FlutterActivity() {
                         val ssid = call.argument<String>("ssid")
                         val mode = call.argument<Int>("mode")
 
-                        tuyaDeviceHandler.startParing(result, homeIdLong!!, password!!, ssid!!, mode!!)
+                        tuyaDeviceHandler.startParing(
+                            result,
+                            homeIdLong!!,
+                            password!!,
+                            ssid!!,
+                            mode!!
+                        )
 
                     } catch (e: Exception) {
                         result.error("errorSetDebug", "data or format error", "")
@@ -305,7 +315,13 @@ class MainActivity : FlutterActivity() {
                         val time = call.argument<String>("time")
                         val loops = call.argument<String>("loops")
                         val dpsStatus = call.argument<Boolean>("dpsStatus")
-                        tuyaTimerHandler.addDeviceTimer(result, deviceId!!, time!!, loops!!, dpsStatus!!)
+                        tuyaTimerHandler.addDeviceTimer(
+                            result,
+                            deviceId!!,
+                            time!!,
+                            loops!!,
+                            dpsStatus!!
+                        )
                     } catch (e: Exception) {
                         result.error("errorSetDebug", "data or format error", "")
                     }
@@ -325,7 +341,12 @@ class MainActivity : FlutterActivity() {
                         val deviceId = call.argument<String>("deviceId")
                         val timerIds = call.argument<List<String>>("timerIds")
                         val updateType = call.argument<Int>("updateType")
-                        tuyaTimerHandler.updateTimerStatus(result, deviceId!!, timerIds!!, updateType!!)
+                        tuyaTimerHandler.updateTimerStatus(
+                            result,
+                            deviceId!!,
+                            timerIds!!,
+                            updateType!!
+                        )
                     } catch (e: Exception) {
                         result.error("errorSetDebug", "data or format error", "")
                     }
