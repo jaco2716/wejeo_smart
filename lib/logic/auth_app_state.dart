@@ -80,6 +80,7 @@ class AuthAppState extends ChangeNotifier {
         print('Error: $e \n Code: ${e.code} \n details: ${e.details}');
       }
       errorCallback('${e.message}');
+      // errorCallback('code: ${e.code},\nmessage: ${e.message},\ndetails: ${e.details}');
     }
   }
 
